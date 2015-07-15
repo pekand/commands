@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+# open file or directory in phpstorm shortcut
+
+import sys
+import os
+import re
+import fileinput
+
+if len(sys.argv)<=1:
+    os.system('thunar .')
+elif len(sys.argv)==2 and sys.argv[1] == '-i':
+    for line in fileinput.input():
+        if line == 'exit':
+           exit(0);
+        #print(line)
+        #os.system('e '+line)
+else:
+    matchObj = re.match( r'^([^:]*)(:[0-9]+){0,1}$', sys.argv[1], re.M|re.I)
+    if matchObj:
+        if os.path.isdir(matchObj.group(1)):
+            os.system('thunar "'+sys.argv[1]+'"')
+        else:
+            if os.path.isfile(matchObj.group(1)):
+                os.system('pstorm "'+sys.argv[1]+'"')
+            else:
+                print('File not exist.')
+                exit(1);
+exit(0);

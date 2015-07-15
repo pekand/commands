@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# git checkout shortcut
+
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+echo "Repository: $repo"
+echo "Branch: $branch"
+
+if [ "$1" != "" ] && [ "$repo" != "" ]; then
+    cmd="git checkout $1"
+    echo $cmd && eval $cmd
+fi

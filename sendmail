@@ -1,0 +1,19 @@
+#!/usr/bin/php
+<?php
+
+/* dummy sendmail tool */
+
+try {
+    file_put_contents('/log/email.txt', date("Y-m-d H:i:s").' run', FILE_APPEND);
+    $input = file_get_contents('php://stdin');
+    preg_match('|^To: (.*)|', $input, $matches);
+    if (isset($matches[1])) {
+        $filename = '/log/'. date("YmdHis") . '.' . $matches[1] . '.eml';
+        file_put_contents($filename, $input);
+        shell_exec("chmod 444 $filename -R");
+    } else {
+        file_put_contents('/log/email.txt', date("Y-m-d H:i:s").' '.$input, FILE_APPEND);
+    }
+} catch (Exception $e) {
+    file_put_contents('/log/email.txt', date("Y-m-d H:i:s").' Caught exception: '.  $e->getMessage(), FILE_APPEND);
+}

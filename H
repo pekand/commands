@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#view history shortcut
+
+if [ "$1" != "" ]; then
+    history | cut -c 8- | grep "$@"
+else
+    history | sort -nr | isubl
+fi

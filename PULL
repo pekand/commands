@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# git pull shortcut
+
+branch=$(git symbolic-ref --short HEAD)
+repo=$(basename `git rev-parse --show-toplevel`)
+echo "Repository: $repo"
+echo "Branch: $branch"
+
+if [ "$1" != "" ]; then
+    echo "git pull origin $1"
+    git pull origin $1
+elif [ "$repo" = "lucid-frontend" ]; then
+    echo "git pull origin release"
+    git pull origin release
+elif [ "$repo" = "lucid-backend" ]; then
+    echo "git pull origin release"
+    git pull origin release
+elif [ "$repo" = "mantaapp" ]; then
+    echo "git pull origin master"
+    git pull origin master
+elif [ "$repo" = "mantaapi" ]; then
+    echo "git pull origin master"
+    git pull origin master
+else
+    echo "git pull origin develop"
+    git pull origin develop
+fi

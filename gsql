@@ -1,0 +1,381 @@
+#!/usr/bin/php5
+<?php
+
+$host='';
+$user='root';
+$pass='root';
+
+$db = mysql_connect('localhost',$user,$pass);
+
+$word = '';
+if (isset($argv[1]) && ($argv[1]=='-s' || $argv[1]=='--structure')) {
+    $dbname = $argv[2];
+    print_r(getStructure($db, $dbname));
+}else if (isset($argv[1]) && ($argv[1]=='-i' || $argv[1]=='--indexies')) {
+    $dbname = $argv[2];
+    print_r(getIndexies($db, $dbname));
+}else if (isset($argv[1]) && ($argv[1]=='-k' || $argv[1]=='--keys')) {
+    $dbname = $argv[2];
+    print_r(getForeginKey($db, $dbname));
+}else if (isset($argv[1]) && ($argv[1]=='-c' || $argv[1]=='--clear')) {
+    $dbname = $argv[2];
+    $fkey = $argv[3];
+    ForeginKeyClear($db, $dbname, $fkey);
+}else if (isset($argv[1]) && ($argv[1]=='-t' || $argv[1]=='--tables')) {
+    $dbname = $argv[2];
+    print_r(getTableNames($db, $dbname, $table));
+}else if (isset($argv[1]) && ($argv[1]=='-d' || $argv[1]=='--databases')) {
+    print_r(getDatabaseNames($db, $dbname, $table));
+}else if (isset($argv[1])) {
+    $word = $argv[1];
+
+    $dbname = array();
+    $table = array();
+    $column = array();
+    if (isset($argv[2]) && $argv[2]!="") {
+        $parts = explode("|", $argv[2]);
+
+        if (isset($parts[0])) {
+            $dbname = explode(",", $parts[0]);
+        }
+
+        if (isset($parts[1])) {
+            $table = explode(",", $parts[1]);
+        }
+
+        if (isset($parts[2])) {
+            $column = explode(",", $parts[2]);
+        }
+    }
+
+    $view_columns = array();
+    if(isset($argv[2])) {
+        if (isset($argv[3]) && $argv[3]!="") {
+            $view_columns = explode("|", $argv[3]);
+        }
+    }
+
+
+    $match = searchfor($db, $word, $dbname, $table, $column, $view_columns);
+
+    print_r($match);
+
+} else {
+    echo "gsql {word} {dbname[,dbname]|table[,table]|column[,column]} {view_column}\n";
+    echo "gsql {-s|--structure} {dbname}\n";
+    echo "gsql {-i|--indexies} {dbname}\n";
+    echo "gsql {-k|--keys} {dbname}\n";
+    echo "gsql {-c|--clear} {dbname} {fkey}\n";
+    echo "gsql {-t|--tables} {dbname}\n";
+    echo "gsql {-d|--databases}\n";
+    die();
+}
+
+
+function gettables($db, $dbname)
+{
+    mysql_select_db($dbname, $db);
+
+    $sql = mysql_query("SHOW TABLES;");
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql))
+        $data[] = $row;
+
+    return $data;
+}
+
+
+function getdatabases($db)
+{
+
+    $sql = mysql_query("SHOW DATABASES;");
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql))
+        $data[] = $row;
+
+    return $data;
+}
+
+function getcolumns($db, $dbname, $dbtable)
+{
+
+    $sql = mysql_query("SHOW COLUMNS FROM ".$dbtable.";");
+
+    if (!$sql) {
+        echo "Table not exist!\n";die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql))
+        $data[] = $row;
+
+    return $data;
+}
+
+function searchfor($db, $word, $dbname_select = array(), $table_select = array(), $column_select = array(), $view_columns = array())
+{
+
+    $dbnames = array();
+    if(count($dbname_select)==0) {
+        $dbnametmp = getdatabases($db); //get all databases
+
+        foreach ($dbnametmp as $dbname)
+            $dbnames[] = $dbname['Database'];
+    } else {
+        $dbnames = $dbname_select;
+    }
+
+    $data = array();
+    foreach($dbnames as $dbname){
+        $ecode = mysql_select_db($dbname, $db);
+
+        if (!$ecode) {
+            echo "Database not exist!\n";die;
+        }
+
+        $tables = array();
+        if(count($table_select)==0) {
+            $tabletmp = gettables($db, $dbname); // get all tables in database
+
+            foreach ($tabletmp as $tablex)
+                $tables[] = $tablex['Tables_in_'.$dbname];
+        } else {
+            $tables = $table_select;
+        }
+
+        $data = array();
+        foreach($tables as $table){
+
+            $columns = array();
+            if(count($column_select)==0) {
+                $columnstmp = getcolumns($db, $dbname, $table);
+
+                foreach ($columnstmp as $columnx) {
+                    $columns[] = $columnx['Field'];
+                }
+
+            } else {
+                $columns = $column_select;
+            }
+
+            $like='';
+            for($i=0;$i<count($columns);$i++) {
+                $like .= " ".$columns[$i]." like '%".mysql_real_escape_string($word)."%'";
+                if($i!=count($columns)-1) $like .= " OR";
+            }
+
+            $order='';
+            if (count($view_columns)>0) {
+                $order="ORDER BY";
+                for($i=0;$i<count($view_columns);$i++) {
+                    $order .= " ".$view_columns[$i]." ASC";
+                    if($i!=count($view_columns)-1) $order .= ",";
+                }
+            }
+
+            $query = "SELECT * FROM ".$table." WHERE ".$like." ".$order;
+
+            //print_r($query);
+
+            $sql = mysql_query($query);
+
+            if (!$sql) {
+                echo "Column not exist!\n";die;
+            }
+
+            while ($sql && $row = mysql_fetch_assoc($sql)) {
+
+                if (count($view_columns)>0) {
+                    foreach ($row as $key=>$val) {
+                        if (!in_array($key, $view_columns)) {
+                            unset($row[$key]);
+                        }
+                    }
+                }
+
+                $data[$dbname][$table][] = $row;
+            }
+        }
+    }
+
+    return $data;
+}
+
+function getStructure($db, $dbname)
+{
+    /*SELECT *
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME ='products';*/
+
+    $sql = mysql_query("
+        SELECT *
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = '{$dbname}'
+        ORDER BY TABLE_SCHEMA ASC, TABLE_NAME ASC, ORDINAL_POSITION ASC
+    ");
+
+    $dbstructure = array();
+    if (!$sql) {
+        echo "Table not exist!\n";die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row;
+
+        $databasename = $row['TABLE_SCHEMA'];
+        $tablename = $row['TABLE_NAME'];
+        $columnname = $row['COLUMN_NAME'];
+
+        $dbstructure[$databasename][$tablename][$columnname] = $row;
+    }
+
+    return $dbstructure;
+}
+
+
+function getIndexies($db, $dbname)
+{
+    $sql = mysql_query("
+        SELECT
+            *
+        FROM INFORMATION_SCHEMA.STATISTICS
+        WHERE TABLE_SCHEMA = '{$dbname}';
+    ");
+
+    $dbstructure = array();
+    if (!$sql) {
+        echo "Table not exist!\n";die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row;
+
+        $databasename = $row['TABLE_SCHEMA'];
+        $tablename = $row['TABLE_NAME'];
+        $columnname = $row['COLUMN_NAME'];
+
+        $dbstructure[$databasename][$tablename][$columnname] = $row;
+    }
+
+    return $dbstructure;
+}
+
+function getForeginKey($db, $dbname)
+{
+
+    mysql_select_db('information_schema', $db);
+
+    $sql = mysql_query("
+        SELECT *
+        FROM KEY_COLUMN_USAGE
+        WHERE  CONSTRAINT_SCHEMA = '{$dbname}'
+    ");
+
+    $dbstructure = array();
+    if (!$sql) {
+        echo "Table not exist!\n";die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row;
+
+        $databasename = $row['TABLE_SCHEMA'];
+        $tablename = $row['TABLE_NAME'];
+        $columnname = $row['COLUMN_NAME'];
+        $reftablename = $row['REFERENCED_TABLE_NAME'];
+        $refcolumnname = $row['REFERENCED_COLUMN_NAME'];
+
+        $dbstructure[$databasename][$tablename][$columnname] = $reftablename.'.'.$refcolumnname;
+    }
+
+    return $dbstructure;
+}
+
+function ForeginKeyClear($db, $dbname, $fkey)
+{
+
+    mysql_select_db('information_schema', $db);
+
+    $sql = mysql_query("
+        SELECT *
+        FROM KEY_COLUMN_USAGE
+        WHERE  CONSTRAINT_SCHEMA = '{$dbname}'
+    ");
+
+    $dbstructure = array();
+    if (!$sql) {
+        echo "Table not exist!\n";die;
+    }
+
+    $data = array();
+
+    mysql_select_db($dbname, $db);
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row;
+
+        $databasename = $row['TABLE_SCHEMA'];
+        $tablename = $row['TABLE_NAME'];
+        $columnname = $row['COLUMN_NAME'];
+        $reftablename = $row['REFERENCED_TABLE_NAME'];
+        $refcolumnname = $row['REFERENCED_COLUMN_NAME'];
+
+        if ($reftablename.'.'.$refcolumnname == $fkey) {
+            echo "Clear: ".$tablename.".".$columnname."\n";
+            $query = "UPDATE `".$tablename."` SET `".$columnname."`=NULL WHERE true;";
+            $res = mysql_query($query, $db);
+            if (!$res) {
+                echo 'ERROR: '.mysql_error($db);die;
+            }
+        }
+
+    }
+
+    return $dbstructure;
+}
+
+function getTableNames($db, $dbname, $table)
+{
+    mysql_select_db($dbname, $db);
+
+    $sql = mysql_query("SHOW TABLES FROM {$dbname}", $db);
+    if (!$sql) {
+        echo 'ERROR: '.mysql_error($db);die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row['Tables_in_'.$dbname];
+    }
+
+    return $data;
+}
+
+function getDatabaseNames($db, $dbname, $table)
+{
+
+    $sql = mysql_query("SHOW DATABASES", $db);
+    if (!$sql) {
+        echo 'ERROR: '.mysql_error($db);die;
+    }
+
+    $data = array();
+
+    while ($row = mysql_fetch_assoc($sql)) {
+        $data[] = $row['Database'];
+    }
+
+    return $data;
+}

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# bckg current work in git repository
+
+DIRNAME=${PWD##*/} #name of current directory
+ADDITIONAL="$@"
+directory=~/Desktop/Bckg/
+directory=${directory}$(date +'%Y')/
+if [[ ! -d $directory ]]; then
+  mkdir $directory
+fi
+directory=${directory}$(date +'%m')/
+if [[ ! -d $directory ]]; then
+  mkdir $directory
+fi
+directory=${directory}$(date +'%d')/
+if [[ ! -d $directory ]]; then
+  mkdir $directory
+fi
+
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+
+FILENAME=${directory}bckg-`date +"%Y-%m-%d-%H-%M-%S"`-[$repo][$branch][$ADDITIONAL].zip
+echo $FILENAME
+
+zip "$FILENAME" $(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)

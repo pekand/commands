@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# open directory with email logs shortcut
+
+thunar "/var/log/mail"

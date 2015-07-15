@@ -1,0 +1,57 @@
+#!/bin/bash
+
+#git push shortcut
+
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+if [ "$repo" = "NGTU2" ]; then
+    cmd="git push origin $branch"
+    echo $cmd
+    eval $cmd
+elif [ "$repo" = "everBox" ]; then
+    if [ "$branch" != "master" ] && [ "$branch" != "develop" ]; then
+        cmd="git push origin $branch"
+        echo $cmd && eval $cmd
+        firefox "https://github.com/everlutionsk/everBox/compare/develop...$branch"
+    fi;
+elif [ "$repo" = "lucid-frontend" ]; then
+    if [ "$branch" != "master" ]; then
+        cmd="git push origin $branch"
+        echo $cmd && eval $cmd
+        firefox "https://github.com/everlution/lucid-frontend/compare/release...$branch"
+    fi;
+elif [ "$repo" = "lucid-backend" ]; then
+    if [ "$branch" != "master" ]; then
+        cmd="git push origin $branch"
+        echo $cmd && eval $cmd
+        firefox "https://github.com/everlution/lucid-backend/compare/release...$branch"
+    fi;
+elif [ "$repo" = "ats" ]; then
+    cmd="git push origin $branch"
+    echo $cmd
+    eval $cmd
+    firefox "https://github.com/everlution/ATS/compare/develop...$branch"
+elif [ "$repo" = "spaceSpy" ]; then
+    cmd="git push origin $branch"
+    echo $cmd
+    eval $cmd
+    firefox "https://github.com/everlutionsk/spaceSpy/compare/develop...$branch"
+elif [ "$repo" = "clean" ]; then
+    cmd="git push origin $branch"
+    echo $cmd
+    eval $cmd
+    firefox "https://github.com/everlutionsk/clean/compare/master...$branch"
+elif [ "$repo" = "smoof" ]; then
+    if [ "$branch" != "master" ] && [ "$branch" != "develop" ]; then
+        cmd="git push origin $branch"
+        echo $cmd && eval $cmd
+        firefox "https://github.com/everlutionsk/smoof/compare/develop...$branch"
+    fi;
+else
+    #cmd="git push origin $branch"
+    #echo $cmd
+    #eval $cmd
+    #firefox "https://github.com/pekand/$repo"
+    echo "Repository: $repo"
+    echo "Branch: $branch"
+fi

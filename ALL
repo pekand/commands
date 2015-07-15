@@ -1,0 +1,9 @@
+#!/bin/bash
+
+
+# git add all shortcut
+
+bckg "$@"
+A all
+M "$@"
+PUSH

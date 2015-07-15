@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# git diff shortcut
+
+if [ "$1" = "file" ]; then
+    git diff | isubl
+
+elif [ "$1" = "new" ]; then
+    IFS=$'\n'
+    for f in `git ls-files --others --exclude-standard`
+    do
+      echo "---"
+      echo "$f"
+      echo "---"
+      cat "$f"
+    done
+elif [ "$1" != "" ]; then
+    git diff "$1"
+else
+    git diff
+fi

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# git add shortcut
+
+if [ "$1" = "all" ]; then
+    git add --all
+elif [ "$1" = "reset" ]; then
+    git reset HEAD
+elif [ "$1" != "" ]; then
+    git add $@
+else
+    echo "a {file}"
+    echo "a all"
+    echo "a reset"
+fi

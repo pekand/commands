@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#symfony console shortcut
+
+repo=$(basename `git rev-parse --show-toplevel`)
+cd /var/www/src/$repo/
+app/console "$@"

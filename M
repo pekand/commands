@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#git commit shortcut
+
+bckg "$@"
+git commit -m "$@"

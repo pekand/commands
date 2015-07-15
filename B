@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# switch or create branch shortcut
+
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+echo "Repository: $repo"
+echo "Branch: $branch"
+
+if [ "$1" != "" ]; then
+    echo "git fetch --all"
+    git fetch --all
+
+    exist=`git branch --list $1`
+    if [ "$exist" = "" ]; then
+        cmd="git checkout -b $1 $branch"
+        echo $cmd && eval $cmd
+    else
+        cmd="git checkout $1"
+        echo $cmd && eval $cmd
+    fi
+else
+    echo "git branch"
+    git branch -ar
+    git branch
+fi

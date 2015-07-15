@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#git reset add shortcut
+
+bckg
+git reset HEAD
