@@ -47,7 +47,7 @@ elif [ "$repo" = "smoof" ]; then
         echo $cmd && eval $cmd
         firefox "https://github.com/everlutionsk/smoof/compare/develop...$branch"
     fi;
-elif [ "$repo" = "grep" ]; then
+elif [ "$repo" = "script" ]; then
     if [ "$branch" != "master" ] && [ "$branch" != "develop" ]; then
         cmd="git push origin $branch"
         echo $cmd && eval $cmd
