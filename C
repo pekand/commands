@@ -7,7 +7,8 @@ do
 done
 
 self="${0##*/}"
-passwordHash=`cat passwordHash.txt`
+scriptdir=`dirname "$BASH_SOURCE"`
+passwordHash=`cat $scriptdir/passwordHash.txt`
 
 if [ "$1" = "bckg" ]; then
     if [ "$2" = "everlution" ]; then
