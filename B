@@ -12,12 +12,21 @@ if [ "$1" != "" ]; then
     git fetch --all
 
     exist=`git branch --list $1`
-    if [ "$exist" = "" ]; then
-        cmd="git checkout -b $1 $branch"
-        echo $cmd && eval $cmd
-    else
+    if [ "$exist" != "" ]; then
+        echo "-switch to local branch"
         cmd="git checkout $1"
         echo $cmd && eval $cmd
+    else
+        exist=`git branch -ar --list origin/$1`
+        if [ "$exist" != "" ]; then
+            echo "-copy branch from remote server"
+            cmd="git checkout -b $1 origin/$1"
+            echo $cmd && eval $cmd
+        else
+            echo "-create nerw local branch"
+            cmd="git checkout -b $1 $branch"
+            echo $cmd && eval $cmd
+        fi
     fi
 else
     echo "git branch"
