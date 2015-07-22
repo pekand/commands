@@ -8,6 +8,10 @@ import os
 import re
 import fileinput
 
+def touch(path):
+    with open(path, 'a'):
+        os.utime(path, None)
+
 if len(sys.argv)<=1:
     os.system('thunar .')
 elif len(sys.argv)==2 and sys.argv[1] == '-i':
@@ -22,9 +26,9 @@ else:
         if os.path.isdir(matchObj.group(1)):
             os.system('thunar "'+sys.argv[1]+'"')
         else:
+            if not os.path.isfile(matchObj.group(1)):
+                touch(matchObj.group(1))
+
             if os.path.isfile(matchObj.group(1)):
                 os.system('pstorm "'+sys.argv[1]+'"')
-            else:
-                print('File not exist.')
-                exit(1);
 exit(0);
