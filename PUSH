@@ -8,6 +8,17 @@ if [ "$repo" = "NGTU2" ]; then
     cmd="git push origin $branch"
     echo $cmd
     eval $cmd
+
+elif [ "$1" = "master" ]; then
+    echo push to master
+    cmd="git push origin master"
+    echo $cmd && eval $cmd
+
+elif [ "$1" = "develop" ]; then
+    echo push to master
+    cmd="git push origin develop"
+    echo $cmd && eval $cmd
+
 elif [ "$repo" = "everBox" ]; then
     if [ "$branch" != "master" ] && [ "$branch" != "develop" ]; then
         cmd="git push origin $branch"
