@@ -1,0 +1,13 @@
+#!/bin/bash
+question="Are you sure?"
+if [[ "$1" != "" ]]
+then
+    question="$1"
+fi
+
+read -p "$question" choice
+case "$choice" in
+  y|Y ) echo "yes";;
+  n|N ) echo "no";;
+  * ) echo "invalid";;
+esac
