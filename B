@@ -6,25 +6,31 @@ repo=$(basename `git rev-parse --show-toplevel`)
 branch=$(git symbolic-ref --short HEAD)
 echo "Repository: $repo"
 echo "Branch: $branch"
+br=$1
+re='^[0-9]+$'
+if [[ "$br" =~ $re ]] ; then
+   br=feature-$br
+   echo "rename to $br"
+fi
 
-if [ "$1" != "" ]; then
+if [ "$br" != "" ]; then
     echo "git fetch --all"
     git fetch --all
 
-    exist=`git branch --list $1`
+    exist=`git branch --list $br`
     if [ "$exist" != "" ]; then
         echo "-switch to local branch"
-        cmd="git checkout $1"
+        cmd="git checkout $br"
         echo $cmd && eval $cmd
     else
-        exist=`git branch -ar --list origin/$1`
+        exist=`git branch -ar --list origin/$br`
         if [ "$exist" != "" ]; then
             echo "-copy branch from remote server"
-            cmd="git checkout -b $1 origin/$1"
+            cmd="git checkout -b $br origin/$br"
             echo $cmd && eval $cmd
         else
             echo "-create nerw local branch"
-            cmd="git checkout -b $1 $branch"
+            cmd="git checkout -b $br $branch"
             echo $cmd && eval $cmd
         fi
     fi
