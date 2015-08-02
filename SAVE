@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+
+var_dump($argv);
+$params = $argv;
+array_shift($params);
+$params = trim(implode(" ", $params));
+
+echo  $params;
+$file = realpath(dirname(__FILE__))."/out.txt";
+echo $file;
+
+file_put_contents($file, "\n".$params, FILE_APPEND | LOCK_EX);
