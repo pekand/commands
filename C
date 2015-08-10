@@ -8,7 +8,13 @@ done
 
 self="${0##*/}"
 scriptdir=`dirname "$BASH_SOURCE"`
-passwordHash=`cat $scriptdir/passwordHash.txt`
+if [ -f "$scriptdir/passwordHash.txt" ];
+then
+    passwordHash=""
+else
+    passwordHash=`cat $scriptdir/passwordHash.txt`
+fi
+
 
 if [ "$1" = "bckg" ]; then
     if [ "$2" = "everlution" ]; then
@@ -369,7 +375,7 @@ elif [ "$1" = "style" ] || [ "$1" = "styles" ]; then
         echo "  production                 >> install and dump for prod"
     fi
 
-elif [ "$1" = "schema" ]; then
+elif [ "$1" = "schema" ] || [ "$1" = "doctrine" ]; then
 
     if [ "$2" = "update" ]; then
         echo -e "\e[31m Doctrine update \e[0m"
@@ -503,17 +509,6 @@ elif [ "$1" = "sql" ]; then
         echo "sql {db} {query}             >> "
     fi
 
-elif [ "$1" = "console" ]; then
-
-    if [ "$2" != "" ] && [ "$3" != "" ]; then
-       cd /var/www/src/$2/
-       app/console $3
-    fi
-
-    if [ "$3" = "" ]; then
-         echo "console {project} {command}  >> run project console directory independent"
-    fi
-
 elif [ "$1" = "dns" ]; then
 
     if [ "$2" = "restart" ]; then
@@ -608,7 +603,7 @@ elif [ "$1" = "restart" ]; then
 elif [ "$1" = "edit" ]; then
 
     if [ "$2" = "script" ]; then
-        E "/home/kerberos/Desktop/Everlution/script"
+        E ~/Everlution/script
     elif [ "$2" = "hosts" ] || [ "$2" = "host" ]; then
         sudo vim /etc/hosts
     elif [ "$2" = "apache" ]; then
@@ -620,11 +615,11 @@ elif [ "$1" = "edit" ]; then
     elif [ "$2" = "scan" ]; then
         E /home/kerberos/Desktop/Everlution/Server/grep/scan.php
     elif [ "$2" = "self" ] || [ "$2" = "" ]; then
-        subl "~/Desktop/Everlution/script/$self"
+        subl ~/Desktop/Everlution/script/$self
     elif [ "$2" = "bashrc" ]; then
-        E "/home/kerberos/.bashrc"
+        E ~/.bashrc
     elif [ "$2" != "" ]; then
-        subl "~/Desktop/Everlution/script/$2"
+        E ~/Desktop/Everlution/script/$2
     fi
 
     if [ "$2" = "" ]; then
@@ -640,10 +635,6 @@ elif [ "$1" = "edit" ]; then
         echo " {name}                      >> edit file in script directory"
     fi
 
-elif [ "$1" = "scripts" ]; then
-
-    thunar "/home/kerberos/Desktop/Everlution/script"
-
 elif [ "$1" = "validate" ]; then
 
     if [ "$2" = "json" ]; then
@@ -658,21 +649,6 @@ elif [ "$1" = "validate" ]; then
         echo "validate                     >> validation"
         echo "  json {filename}            >> check json"
         echo "  php {filename}             >> check php"
-    fi
-
-elif [ "$1" = "create" ]; then
-
-    if [ "$2" = "database" ]; then
-        mysql -uroot -proot -e "
-        create database $3 character set utf8 collate utf8_general_ci;
-        create user $3 identified by '$3';
-        grant all on $3.* to $3@localhost identified by '$3';
-        flush privileges;"
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "create                       >> "
-        echo "  database {name}            >> create new database"
     fi
 
 elif [ "$1" = "download" ]; then
@@ -692,16 +668,6 @@ elif [ "$1" = "download" ]; then
         echo "  symfony                    >> "
     fi
 
-elif [ "$1" = "doctrine" ]; then
-
-    if [ "$2" = "update" ]; then
-        app/console doctrine:schema:update --force --dump-sql
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "doctrine                     >> "
-        echo "  update                     >> update project database"
-    fi
 
 elif [ "$1" = "update" ]; then
 
@@ -768,12 +734,11 @@ elif [ "$1" = "email" ]; then
 
     if [ "$2" = "" ]; then
         echo "email                        >> "
-        echo "  list                        >> list emails"
+        echo "  list                       >> list emails"
         echo "  {email}                    >> open file"
     fi
 
 elif [ "$1" = "version" ]; then
-
 
     if [ "$2" = "composer" ]; then
         php composer.phar --version
@@ -842,10 +807,6 @@ elif [ "$1" = "install" ]; then
             flush privileges;" | mysql -u root -proot
     fi
 
-    if [ "$2" = "colorpicker" ]; then
-        sudo apt-get install gpick
-    fi
-
     if [ "$2" = "symfony" ] && [ "$3" != "" ]; then
         $self composer install
         php composer.phar create-project symfony/framework-standard-edition $3
@@ -859,8 +820,7 @@ elif [ "$1" = "install" ]; then
         echo "install                      >> installation scripts"
         echo "  composer                   >>"
         echo "  server {name}              >>"
-        echo "  colorpicker                >> gpick"
-        echo "  symfony {projectName}      >> "
+        echo "  symfony {projectName}      >>"
     fi
 
 elif [ "$1" = "cache" ]; then
@@ -875,125 +835,6 @@ elif [ "$1" = "cache" ]; then
     if [ "$2" = "" ]; then
         echo "cache                        >>"
         echo "  clear                      >>"
-    fi
-
-elif [ "$1" = "manta" ]; then
-
-    if [ "$2" = "reindex" ]; then
-        echo -e "\e[31m Manta reindex \e[0m"
-        cd /var/www/src/mantaapi
-        app/console fos:elastica:populate
-    fi
-
-    if [ "$2" = "index" ] && [ "$3" = "reset" ]; then
-        echo -e "\e[31m Manta reset index \e[0m"
-        cd /var/www/src/mantaapi
-        app/console fos:elastica:reset
-    fi
-
-    if [ "$2" = "cache" ] && [ "$3" = "clear" ]; then
-        echo -e "\e[31m Manta clear cache \e[0m"
-        cd /var/www/src/mantaapi
-        sudo rm -R /var/www/src/mantaapi/app/cache/dev/
-        sudo app/console cache:clear
-        sudo rm -R /var/www/src/mantaapi/app/cache/prod/
-        sudo app/console cache:clear --env=prod
-    fi
-
-    if [ "$2" = "update" ] && [ "$3" = "database" ]; then
-        echo -e "\e[31m Manta update database schema \e[0m"
-        cd /var/www/src/mantaapi
-        app/console doctrine:schema:update --force
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "manta                        >>"
-        echo "  reindex                    >>"
-        echo "  index reset                >>"
-        echo "  cahce clear                >>"
-        echo "  update database            >>"
-    fi
-
-elif [ "$1" = "tiw" ]; then
-
-    if [ "$2" = "reindex" ]; then
-        echo -e "\e[31m Tiw reindex \e[0m"
-        cd /var/www/src/tiw
-        app/console fos:elastica:populate
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "tiw                          >>"
-        echo "  reindex                    >>"
-    fi
-
-elif [ "$1" = "ngtu" ]; then
-
-    if [ "$2" = "reindex" ]; then
-        echo -e "\e[31m Ngtu reindex \e[0m"
-        cd /var/www/src/NGTU2
-        app/console everlution:search:reindex
-    fi
-
-    if [ "$2" = "update" ] && [ "$3" = "database" ]; then
-        echo -e "\e[31m Ngtu update schema \e[0m"
-        cd /var/www/src/NGTU2
-        app/console doctrine:schema:update --force
-    fi
-
-    if [ "$2" = "cache" ] && [ "$3" = "clear" ]; then
-        echo -e "\e[31m Ngtu update schema \e[0m"
-        cd /var/www/src/spaceSpy
-        sudo rm -R /var/www/src/spaceSpy/app/cache/dev/
-        sudo app/console cache:clear
-        sudo rm -R /var/www/src/spaceSpy/app/cache/prod/
-        sudo app/console cache:clear --env=prod
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "ngtu                         >>"
-        echo "  reindex                    >>"
-        echo "  update database            >>"
-        echo "  cahce clear                >>"
-    fi
-
-elif [ "$1" = "spacespy" ]; then
-
-    if [ "$2" = "reindex" ]; then
-        echo -e "\e[31m spacespy reindex \e[0m"
-        cd /var/www/src/spaceSpy
-        app/console everlution:search:reindex
-    fi
-
-    if [ "$2" = "assets" ] && [ "$3" = "update" ]; then
-        echo -e "\e[31m spacespy assets update \e[0m"
-        cd /var/www/src/spaceSpy
-        app/console cache:clear
-        app/console assetic:dump
-        app/console assets:install --symlink
-    fi
-
-    if [ "$2" = "update" ] && [ "$3" = "database" ]; then
-        echo -e "\e[31m spacespy update schema \e[0m"
-        cd /var/www/src/spaceSpy
-        app/console doctrine:schema:update --force
-    fi
-
-    if [ "$2" = "cache" ] && [ "$3" = "clear" ]; then
-        echo -e "\e[31m spacespy cache clear \e[0m"
-        cd /var/www/src/spaceSpy
-        sudo rm -R /var/www/src/spaceSpy/app/cache/dev/
-        sudo app/console cache:clear
-        sudo rm -R /var/www/src/spaceSpy/app/cache/prod/
-        sudo app/console cache:clear --env=prod
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "spacespy                     >>"
-        echo "  reindex                    >>"
-        echo "  assets update              >>"
-        echo "  update database            >>"
-        echo "  cahce clear                >>"
     fi
 
 elif [ "$1" = "system" ]; then
@@ -1015,9 +856,14 @@ elif [ "$1" = "system" ]; then
         arandr
     fi
 
-    if [ "$2" = "packages" ]; then
+    if [ "$2" = "packages" ] && [ "$3" = "installed" ]; then
         echo -e "\e[31m All manualy instaled packages \e[0m"
         comm -23 <(apt-mark showmanual | sort -u) <(gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort -u)
+    fi
+
+    if [ "$2" = "packages" ] && [ "$3" = "all" ]; then
+        echo -e "\e[31m All instaled packages \e[0m"
+        dpkg -l | isubl
     fi
 
     if [ "$2" = "" ]; then
@@ -1025,28 +871,8 @@ elif [ "$1" = "system" ]; then
         echo "  update                     >> download ubuntu updates"
         echo "  hibernate                  >> hibernate"
         echo "  screen                     >> screen layout settings"
-        echo "  packages                   >> all manualy instaled packages"
-    fi
-
-
-elif [ "$1" = "template" ]; then
-
-    if [ "$2" = "remote" ]; then
-        echo "git remote rm origin"
-        echo "git remote rm upstream"
-        echo "git remote add origin https://github.com/pekand/$3.git"
-        echo "git remote add upstream https://github.com/everlution/$3.git"
-        echo "git remote -v"
-    fi
-
-    if [ "$2" = "system" ]; then
-        echo "EMPTY"
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "template                     >> generate template for manual action"
-        echo "  remote {project}           >> set origin and master on git project"
-        echo "  system                     >> install new system"
+        echo "  packages installed         >> all manualy instaled packages"
+        echo "  packages all               >> all instaled packages"
     fi
 
 elif [ "$1" = "documentation" ] || [ "$1" = "doc" ]; then
@@ -1065,27 +891,9 @@ elif [ "$1" = "documentation" ] || [ "$1" = "doc" ]; then
         echo "  create                     >>"
     fi
 
-elif [ "$1" = "issues" ]; then
-
-    if [ "$2" = "manta" ]; then
-        firefox "https://github.com/everlution/manta-api/issues/assigned/pekand"
-    elif [ "$2" = "ngtu" ]; then
-        firefox "https://github.com/everlution/manta-api/NGTU2/assigned/pekand"
-    elif [ "$2" = "spacespy" ]; then
-        firefox "https://github.com/everlutionsk/spaceSpy/issues/assigned/pekand"
-    elif [ "$2" != "" ]; then
-        firefox "https://github.com/everlution/$3/issues/assigned/pekand"
-    else
-        echo "issues  {project}           >> view project issue"
-    fi
-
 elif [ "$1" = "space" ]; then
     echo -e "\e[31m Free disc space \e[0m"
     df -h
-
-elif [ "$1" = "branch" ] && [ "$2" != "" ]; then
-    echo -e "\e[31m Create new branch \e[0m"
-    git checkout develop && git pull upstream develop && git checkout -b "feature-$2" develop
 
 elif [ "$1" = "routes" ]; then
     echo -e "\e[31m Get routes  \e[0m"
@@ -1099,9 +907,6 @@ elif [ "$1" = "session" ]; then
     else
         echo "session clear                >> delete php sessions"
     fi
-
-elif [ "$1" = "dbadmin" ]; then
-    firefox "http://dbadmin.dev"
 
 elif [ "$1" = "grep" ]; then
     pwd=$(pwd)
@@ -1136,7 +941,7 @@ elif [ "$1" = "config" ]; then
 elif [ "$1" = "post" ]; then
 
     if [ "$2" != "" ]; then
-        echo -e "\e[31m Svn commit  \e[0m"
+        echo -e "\e[31m cur post  \e[0m"
 
         data=""
         if [ "$3" != "" ]; then
@@ -1146,7 +951,7 @@ elif [ "$1" = "post" ]; then
     fi
 
     if [ "$2" = "" ]; then
-        echo "post {url} {data}  >> p1=val&p2=val"
+        echo "post {url} {data}  >> send post request (data has format p1=val&p2=val)"
     fi
 
 elif [ "$1" = "svn" ]; then
@@ -1176,42 +981,6 @@ elif [ "$1" = "svn" ]; then
         echo "svn update"
         echo "svn status"
     fi
-elif [ "$1" = "user" ]; then
-
-    if [ "$2" = "create" ]; then
-        echo -e "\e[31m Create everlution user  \e[0m"
-        Z everlution:user:create
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "user create"
-    fi
-
-elif [ "$1" = "diagram" ]; then
-
-    if [ "$2" = "open" ]; then
-        echo -e "\e[31m Open common diagrams  \e[0m"
-        diagram  /home/kerberos/Desktop/Everlution/Diagrams/map.diagram   /home/kerberos/Desktop/Everlution/Diagrams/info.diagram   /home/kerberos/Desktop/Everlution/Diagrams/log.diagram
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "diagram open"
-    fi
-
-elif [ "$1" = "disk" ]; then
-
-    if [ "$2" = "usage" ]; then
-        echo -e "\e[31m Disk usage  \e[0m"
-        df -h
-    fi
-
-    if [ "$2" = "" ]; then
-        echo "disk usage"
-    fi
-
-elif [ "$1" = "note" ]; then
-
-    subl ~/Desktop/Everlution/Note/note-`date +"%Y-%m-%d"`
 
 elif [ "$1" = "redis" ]; then
 
@@ -1226,7 +995,7 @@ elif [ "$1" = "redis" ]; then
 
 elif [ "$1" = "mail" ]; then
 
-    if [ "$2" = "run" ]; then
+    if [ "$2" = "catch" ]; then
         echo -e "\e[31m Run mail server for debuging  \e[0m"
         sudo python -m smtpd -n -c DebuggingServer localhost:25
     fi
@@ -1252,7 +1021,7 @@ elif [ "$1" = "mail" ]; then
     fi
 
     if [ "$2" = "" ]; then
-        echo "run"
+        echo "catch"
         echo "start"
         echo "stop"
         echo "restart"
@@ -1270,19 +1039,15 @@ else
         echo "rights|permissions           >> "
         echo "elastic|search               >> index aliesies"
         echo "styles                       >> dump and instal"
-        echo "schema                       >> doctrine schema commands"
+        echo "schema|doctrine              >> doctrine schema commands"
         echo "database|db                  >> "
         echo "sql {db} {query}             >> "
-        echo "console {project} {command}  >> run project console directory independent"
         echo "dns                          >> manage dns server"
         echo "server                       >> manage apache server"
         echo "restart                      >>"
         echo "edit                         >>"
-        echo "scripts                      >> show directory with scripts"
         echo "validate                     >> validation"
-        echo "create                       >> "
         echo "download                     >> "
-        echo "doctrine                     >> "
         echo "update                       >> "
         echo "composer                     >> "
         echo "directory                    >> "
@@ -1290,25 +1055,14 @@ else
         echo "version                      >> list installed system apps versions"
         echo "install                      >> installation scripts"
         echo "cahce                        >> "
-        echo "manta                        >> "
-        echo "tiw                          >> "
-        echo "ngtu                         >> "
-        echo "spacespy                     >> "
         echo "system                       >> "
-        echo "template                     >> generate template for manual action"
         echo "documentation|doc            >> doxygen documentation"
-        echo "issues                       >> view project issue"
         echo "space                        >> free disc space"
-        echo "branch {ticketId}            >> create new branch"
         echo "routes                       >> view symfony project routes"
         echo "session clear                >> delete php sessions"
-        echo "dbadmin                      >> show phpmyadmin"
         echo "grep                         >> show grep"
         echo "config                       >> open configuration file"
-        echo "post                         >> send data"
+        echo "post                         >> send data with curl"
         echo "svn                          >> commands"
-        echo "user                         >> "
-        echo "diagram                      >> "
-        echo "disk usage                   >> "
     fi
 fi
