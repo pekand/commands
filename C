@@ -1028,13 +1028,30 @@ elif [ "$1" = "mail" ]; then
         echo "test"
     fi
 
+elif [ "$1" = "port" ]; then
+
+    if [ "$2" = "kill" ] && [ "$3" != "" ]; then
+        echo -e "\e[31m kill application using port $3 \e[0m"
+        process=`sudo netstat -tulpn | grep :$3 | awk '{print $7}' | sed -e "s/\/.*//g"`
+        if [ "$process" != "" ]; then
+            cmd="sudo kill -9 $process"
+            echo $cmd && eval $cmd
+        else
+            echo "port is free"
+        fi
+    fi
+
+    if [ "$2" = "" ]; then
+        echo "kill {port}"
+    fi
+
 else
 
     if [ "$2" != "" ]; then
         $self help | grep --color -E "$2|$"
     else
         echo "bckg                         >> run bckg"
-        echo "project                      >>"
+        echo "project                      >> "
         echo "git                          >> git commands"
         echo "rights|permissions           >> "
         echo "elastic|search               >> index aliesies"
@@ -1064,5 +1081,6 @@ else
         echo "config                       >> open configuration file"
         echo "post                         >> send data with curl"
         echo "svn                          >> commands"
+        echo "port                         >> "
     fi
 fi
