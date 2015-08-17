@@ -1,5 +1,20 @@
 #!/bin/bash
 
-# list directory shortcut
+# view changes in git repo 
 
-ls -la $@
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+echo "Repository: $repo"
+echo "Branch: $branch"
+
+if [ "$1" = "full" ] || [ "$1" = "all" ]; then
+    git log --all | isubl
+
+elif [ "$1" = "list" ]; then
+    echo "git log"
+    cmd="git log --pretty=oneline | isubl"
+    echo $cmd && eval $cmd
+else
+    echo "list"
+    echo "full|all"
+fi
