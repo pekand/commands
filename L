@@ -12,7 +12,7 @@ if [ "$1" = "full" ] || [ "$1" = "all" ]; then
 
 elif [ "$1" = "list" ]; then
     echo "git log"
-    cmd="git log --pretty=oneline | isubl"
+    cmd="git log --pretty=format:'%h - %an, %ar : %s' | isubl"
     echo $cmd && eval $cmd
 else
     echo "list"

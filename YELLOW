@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# print in color
+color="\e[1;33m"
+echo -e "$color$@\e[0m"

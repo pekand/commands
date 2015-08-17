@@ -165,11 +165,11 @@ elif [ "$1" = "git" ]; then
         git remote -v
 
     elif [ "$2" = "reset" ] && [ "$3" = "add" ]; then
-        echo -e "\e[31m Git reset add \e[0m"
+        RED "Git reset add"
         git reset HEAD
 
     elif [ "$2" = "reset" ] && [ "$3" = "commit" ]; then
-        echo -e "\e[31m Git reset commit \e[0m"
+        RED "Git reset commit"
         git reset HEAD^
 
     elif [ "$2" = "reset" ] && [ "$3" = "develop" ]; then
@@ -194,7 +194,7 @@ elif [ "$1" = "git" ]; then
         git diff $branch..$target
 
     elif [ "$2" = "permissions" ] && [ "$3" = "ignore" ]; then
-        echo -e "\e[31m Git ignore file permissions \e[0m"
+        RED "Git ignore file permissions"
         git config core.fileMode false
 
     else
@@ -213,12 +213,12 @@ elif [ "$1" = "git" ]; then
 elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "rights" ] || [ "$1" = "permission" ] || [ "$1" = "permissions" ]; then
 
     if [ "$2" = "owner" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet owner\e[0m"
+        echo -e "\e[31mSet owner"
         #nastavy prava pre web apache adresar
         sudo chown www-data:www-data -R $3
 
     elif [ "$2" = "symfony" ]; then
-        echo -e "\e[31mSet premission\e[0m"
+        echo -e "\e[31mSet premission"
         #nastavy prava pre symfony adresar
 
         if [ "$3" != "" ]; then
@@ -231,7 +231,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
         sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX app/cache app/logs
 
     elif [ "$2" = "filebundle" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet premission for project width filebundle\e[0m"
+        echo -e "\e[31mSet premission for project width filebundle"
         #nastavy prava pre symfony adresar s filebundle
         cd $3
         mkdir web/uploads
@@ -241,13 +241,13 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
         sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads/files
 
     elif [ "$2" = "default" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet server premission\e[0m"
+        echo -e "\e[31mSet server premission"
         #nastavy adresar
         sudo chown -R www-data:www-data "$3"
         sudo find "$3" -type d -exec chmod 775 {} \;
         sudo find "$3" -type f -exec chmod 664 {} \;
     elif [ "$2" = "ignore" ]; then
-        echo -e "\e[31mGit ignore premission\e[0m"
+        echo -e "\e[31mGit ignore premission"
         git config core.fileMode false
 
     else
@@ -262,52 +262,52 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
 elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
 
     if [ "$2" = "update" ]; then
-        echo -e "\e[31m Update \e[0m"
+        RED "Update"
         app/console everlution:search:reindex
 
     elif [ "$2" = "reindex" ] && [ "$3" != "" ]; then
-        echo -e "\e[31m Reindex $3 \e[0m"
+        RED "Reindex $3"
         Z everlution:search:reindex 'AppBundle\Provider\Search\$3' --force --no-interaction
 
     elif [ "$2" = "reindex" ]; then
-        echo -e "\e[31m reindex elastic \e[0m"
+        RED "reindex elastic"
         app/console es:reindex 'one-by-one' --force --no-interaction
 
     elif [ "$2" = "version" ]; then
-        echo -e "\e[31mVersion\e[0m"
+        echo -e "\e[31mVersion"
         curl "localhost:9200/"
 
     elif [ "$2" = "info" ]; then
-        echo -e "\e[31mInfo\e[0m"
+        echo -e "\e[31mInfo"
         curl -XGET "http://localhost:9200/_mapping?pretty=true" | isubl
 
     elif [ "$2" = "indexies" ] || [ "$2" = "index" ]; then
-        echo -e "\e[31m Elastic indexies \e[0m"
+        RED "Elastic indexies"
         curl "http://localhost:9200/_aliases?pretty=true"
 
     elif [ "$2" = "stats" ]; then
-        echo -e "\e[31mIndices\e[0m"
+        echo -e "\e[31mIndices"
         curl "localhost:9200/_stats?pretty=true" | isubl
 
 
     elif [ "$2" = "marvel" ]; then
-        echo -e "\e[31m Marvel plugin \e[0m"
+        RED "Marvel plugin"
         firefox "http://127.0.0.1:9200/_plugin/marvel"
 
     elif [ "$2" = "sense" ]; then
-        echo -e "\e[31m Marvel plugin \e[0m"
+        RED "Marvel plugin"
         firefox "http://127.0.0.1:9200/_plugin/marvel/sense/"
 
     elif [ "$2" = "restart" ]; then
-        echo -e "\e[31m Restart elasticsearch service \e[0m"
+        RED "Restart elasticsearch service"
         sudo service elasticsearch restart
 
     elif [ "$2" = "stop" ]; then
-        echo -e "\e[31m Stop elasticsearch service \e[0m"
+        RED "Stop elasticsearch service"
         sudo service elasticsearch stop
 
     elif [ "$2" = "start" ]; then
-        echo -e "\e[31m Start elasticsearch service \e[0m"
+        RED "Start elasticsearch service"
         sudo service elasticsearch start
 
     elif [ "$2" = "delete" ] && [ "$3" = "all" ]; then
@@ -317,11 +317,11 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         curl -XDELETE "http://localhost:9200/$3/"
 
     elif [ "$2" = "reset" ]; then
-        echo -e "\e[31m Resrt elasticsearch indices for current project \e[0m"
+        RED "Resrt elasticsearch indices for current project"
         Z everlution:search:indices:create --force
 
     elif [ "$2" = "create" ]; then
-        echo -e "\e[31m Elasticsearch indices create \e[0m"
+        RED "Elasticsearch indices create"
         Z everlution:search:indices:create --force
 
     elif [ "$2" = "snapshot" ] && [ "$3" = "list" ]; then
@@ -345,15 +345,15 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         curl -XGET 'localhost:9200/_snapshot/my_backup/$4/_status'
 
     elif [ "$2" != "" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
-        echo -e "\e[31mElastic by id $2\e[0m"
+        echo -e "\e[31mElastic by id $2"
         curl -s -XPOST "http://localhost:9200/$2/$3/_search?pretty=true" -d "{\"query\": { \"match\": {\"_id\": $4} }}" | isubl
 
     elif [ "$2" != "" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mElastic $2\e[0m"
+        echo -e "\e[31mElastic $2"
         curl -s -XPOST "http://localhost:9200/$2/$3/_search?size=10000" -d '{"query": {"match_all": {}}}' | python -mjson.tool | isubl
 
     elif [ "$2" != "" ]; then
-        echo -e "\e[31m Elastic index $2 mapping \e[0m"
+        RED "Elastic index $2 mapping"
         curl -XGET "http://localhost:9200/$2/_mapping?pretty=true" | isubl
 
     else
@@ -411,12 +411,19 @@ elif [ "$1" = "style" ] || [ "$1" = "styles" ]; then
 elif [ "$1" = "schema" ] || [ "$1" = "doctrine" ]; then
 
     if [ "$2" = "update" ]; then
-        echo -e "\e[31m Doctrine update \e[0m"
+        RED "Doctrine update"
         app/console doctrine:schema:update --force --dump-sql
+    fi
+
+    if [ "$2" = "dump" ]; then
+        RED "Doctrine schema dump"
+        cmd="Z d:s:u --dump-sql"
+        COLOR "$cmd" && eval $cmd
     fi
 
     if [ "$2" = "" ]; then
         echo "schema update                >> doctrine schema update"
+        echo "schema dump                  >> only dump doctrine schema update"
     fi
 
 elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
@@ -431,81 +438,84 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
          gettable $3 $4 | isubl
 
     elif [ "$2" = "structure" ] && [ "$3" != "" ]; then
-        echo -e "\e[31m Mysql structure\e[0m"
+        RED "Mysql structure"
         mysqldump -d -h localhost -u root -proot $3 | isubl
 
     elif [ "$2" = "query" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
-        echo -e "\e[31m Mysql run query \e[0m"
+        RED "Mysql run query"
         mysql -u root -proot -e "use $3;$4\G"
 
     elif [ "$2" = "query" ] && [ "$3" != "" ]; then
-        echo -e "\e[31m Mysql run query \e[0m"
+        RED "Mysql run query"
         mysql -u root -proot -e "$3\G"
 
     elif [ "$2" = "export" ]; then
 
         if [ "$3" = "compress" ] && [ "$4" != "" ]; then
-            echo -e "\e[31m Mysql export to file\e[0m"
+            RED "Mysql export to file"
             mysqldump -h localhost -u root -proot --add-drop-database --databases "$4" | gzip > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql.gz"
+        elif [ "$3" = "raw" ] && [ "$4" = "drop" ] && [ "$5" != "" ]; then
+            RED "Mysql export to file with drop"
+            mysqldump -h localhost -u root -proot --add-drop-database --databases "$5" > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
         elif [ "$3" = "raw" ] && [ "$4" != "" ]; then
-            echo -e "\e[31m Mysql export to file\e[0m"
-            mysqldump -h localhost -u root -proot --add-drop-database --databases "$4" > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
+            RED "Mysql export to file without drop"
+            mysqldump -h localhost -u root -proot --skip-add-drop-table --databases "$4" > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
         elif [ "$3" = "stream" ] && [ "$4" != "" ]; then
-            echo -e "\e[31m Mysql export to stream\e[0m"
+            RED "Mysql export to stream"
             mysqldump -h localhost -u root -proot --add-drop-database --databases "$4" | isubl
         fi
 
     elif [ "$2" = "import" ]; then
 
         if [ "$3" = "compressed" ]; then
-            echo -e "\e[31m Mysql import from file.sql.gz\e[0m"
+            RED "Mysql import from file.sql.gz"
             #zcat DB_File_Name.sql.gz | mysql -u username -p Target_DB_Name
             zcat "$4.sql.gz" | mysqldump -h localhost -uroot -proot --add-drop-database --databases
 
         elif [ "$3" = "raw" ]; then
-            echo -e "\e[31m Mysql import from file.sql\e[0m"
+            RED "Mysql import from file.sql"
             mysql -h localhost -u root -proot < $3
 
         elif [ "$3" != "" ] && [ "$4" != "" ]; then
-            echo -e "\e[31m Mysql import from file \e[0m"
-            mysql -h localhost -uroot -proot $3 < $4
+            RED "Mysql import from file"
+            mysql -f -h localhost -uroot -proot $3 < $4
 
         elif [ "$3" != "" ] && [ "$4" = "" ]; then
-            echo -e "\e[31m Mysql import from file \e[0m"
+            RED "Mysql import from file"
             mysql -h localhost -uroot -proot < $3
         fi
 
     elif [ "$2" = "drop" ]; then
-        echo -e "\e[31m Database $3 drop \e[0m"
+        RED "Database $3 drop"
         mysql -uroot -proot -e "
         Drop database $3;"
 
     elif [ "$2" = "reset" ]; then
-        echo -e "\e[31m Database reset $3 \e[0m"
+        RED "Database reset $3"
         mysql -uroot -proot -e "Drop database $3;"
         mysql -uroot -proot -e "create database $3 character set utf8 collate utf8_general_ci;"
 
     elif [ "$2" = "user" ] && [ "$3" = "create" ] && [ "$4" != "" ] && [ "$5" != "" ]; then
-        echo -e "\e[31m Database $3 user $5 create \e[0m"
+        RED "Database $3 user $5 create"
         mysql -uroot -proot -e "
         create user $5 identified by '$5';
         grant all on $4.* to $3@localhost identified by '$5';
         flush privileges;"
 
     elif [ "$2" = "create" ]; then
-        echo -e "\e[31m Database $3 create \e[0m"
+        RED "Database $3 create"
         mysql -uroot -proot -e "create database $3 character set utf8 collate utf8_general_ci;"
 
     elif [ "$2" = "log" ] && [ "$3" = "on" ]; then
-        echo -e "\e[31m Turn on log \e[0m"
+        RED "Turn on log"
         $self sql "SET global general_log = 1;"
 
     elif [ "$2" = "log" ] && [ "$3" = "off" ]; then
-        echo -e "\e[31m Turn off log \e[0m"
+        RED "Turn off log"
         $self sql "SET global general_log = 0;"
 
     elif [ "$2" = "log" ] && [ "$3" = "edit" ]; then
-        echo -e "\e[31m Open log \e[0m"
+        RED "Open log"
         sudo subl /var/log/mysql/mysql.log
 
     else
@@ -515,6 +525,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  table {db} {table}         >> get table as json"
         echo "  structure {db}             >>"
         echo "  export compress {db}       >>  export and compress"
+        echo "  export raw drop {db}       >>  export to raw sql file with drop commands"
         echo "  export raw {db}            >>  export to raw sql file"
         echo "  export stream {db}         >>  export to editor"
         echo "  import {db} {file}         >>  import file to db"
@@ -534,7 +545,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
 elif [ "$1" = "sql" ]; then
 
     if [ "$2" != "" ] && [ "$3" != "" ]; then
-        echo -e "\e[31m Mysql execute query \e[0m"
+        RED "Mysql execute query"
         $self database query "$2" "$3"
     fi
 
@@ -564,7 +575,7 @@ elif [ "$1" = "dns" ]; then
 elif [ "$1" = "server" ]; then
 
     if [ "$2" = "restart" ]; then
-        echo -e "\e[31m Elastic, mysql, redis and apache restart \e[0m"
+        RED "Elastic, mysql, redis and apache restart"
         sudo /bin/systemctl restart elasticsearch.service
         sudo /bin/systemctl restart mysql.service
         sudo /bin/systemctl restart redis-server.service
@@ -580,9 +591,9 @@ elif [ "$1" = "server" ]; then
     elif [ "$2" = "site" ]; then
 
         if [ "$3" = "list" ]; then
-            echo -e "\e[31m Enabled \e[0m"
+            RED "Enabled"
             ls /etc/apache2/sites-enabled/
-            echo -e "\e[31m Advalible \e[0m"
+            RED "Advalible"
             ls /etc/apache2/sites-available/
 
         elif [ "$3" = "enable" ] && [ "$4" != "" ]; then
@@ -614,15 +625,15 @@ elif [ "$1" = "restart" ]; then
         sudo service apache2 restart
 
     elif [ "$2" = "network" ]; then
-        echo -e "\e[31m  Restart network \e[0m"
+        RED " Restart network"
         sudo restart network-manager
 
     elif [ "$2" = "dhcp" ]; then
-        echo -e "\e[31m  Restart dhcp \e[0m"
+        RED " Restart dhcp"
         sudo dhclient -r
 
     elif [ "$2" = "elastic" ]; then
-        echo -e "\e[31m  Restart elasticsearch \e[0m"
+        RED " Restart elasticsearch"
         sudo service elasticsearch restart
 
     else
@@ -705,7 +716,7 @@ elif [ "$1" = "download" ]; then
 elif [ "$1" = "update" ]; then
 
     if [ "$2" = "composer" ]; then
-        echo -e "\e[31m Composer self update \e[0m"
+        RED "Composer self update"
         php composer.phar self-update
     fi
 
@@ -807,7 +818,7 @@ elif [ "$1" = "install" ]; then
 
     if [ "$2" = "server" ] && [ "$3" != "" ]; then
 
-        echo -e "\e[31m Make server \e[0m"
+        RED "Make server"
 
         #make project directory
         sudo mkdir /var/www/src/$3
@@ -859,7 +870,7 @@ elif [ "$1" = "install" ]; then
 elif [ "$1" = "cache" ]; then
 
     if [ "$2" = "clear" ]; then
-        echo -e "\e[31m Clear cache \e[0m"
+        RED "Clear cache"
         #app/console cache:clear
         #app/console cache:clear --env=prod
         rm -rf app/cache/*
@@ -873,29 +884,29 @@ elif [ "$1" = "cache" ]; then
 elif [ "$1" = "system" ]; then
 
     if [ "$2" = "update" ]; then
-        echo -e "\e[31m System update \e[0m"
+        RED "System update"
         sudo apt-get update        # Fetches the list of available updates
         sudo apt-get upgrade       # Strictly upgrades the current packages
         sudo apt-get dist-upgrade  # Installs updates (new ones)
     fi
 
     if [ "$2" = "hibernate" ]; then
-        echo -e "\e[31m System hibernate \e[0m"
+        RED "System hibernate"
         sudo pm-hibernate
     fi
 
     if [ "$2" = "screen" ]; then
-        echo -e "\e[31m Screen settings \e[0m"
+        RED "Screen settings"
         arandr
     fi
 
     if [ "$2" = "packages" ] && [ "$3" = "installed" ]; then
-        echo -e "\e[31m All manualy instaled packages \e[0m"
+        RED "All manualy instaled packages"
         comm -23 <(apt-mark showmanual | sort -u) <(gzip -dc /var/log/installer/initial-status.gz | sed -n 's/^Package: //p' | sort -u)
     fi
 
     if [ "$2" = "packages" ] && [ "$3" = "all" ]; then
-        echo -e "\e[31m All instaled packages \e[0m"
+        RED "All instaled packages"
         dpkg -l | isubl
     fi
 
@@ -925,17 +936,17 @@ elif [ "$1" = "documentation" ] || [ "$1" = "doc" ]; then
     fi
 
 elif [ "$1" = "space" ]; then
-    echo -e "\e[31m Free disc space \e[0m"
+    RED "Free disc space"
     df -h
 
 elif [ "$1" = "routes" ]; then
-    echo -e "\e[31m Get routes  \e[0m"
+    RED "Get routes "
     Z router:debug | isubl
 
 elif [ "$1" = "session" ]; then
 
     if [ "$2" = "clear" ]; then
-        echo -e "\e[31m Clear session  \e[0m"
+        RED "Clear session "
         sudo rm /session/*
     else
         echo "session clear                >> delete php sessions"
@@ -949,19 +960,19 @@ elif [ "$1" = "grep" ]; then
 elif [ "$1" = "config" ]; then
 
     if [ "$2" = "php" ]; then
-        echo -e "\e[31m Php apache config  \e[0m"
+        RED "Php apache config "
         sudo subl /etc/php5/apache2/php.ini
     elif [ "$2" = "cli" ]; then
-        echo -e "\e[31m Php cli config  \e[0m"
+        RED "Php cli config "
         sudo subl /etc/php5/cli/php.ini
     elif [ "$2" = "hosts" ]; then
-        echo -e "\e[31m Hosts  \e[0m"
+        RED "Hosts "
         sudo subl /etc/hosts
     elif [ "$2" = "apache" ]; then
-        echo -e "\e[31m Config mysql \e[0m"
+        RED "Config mysql"
         sudo subl /etc/mysql/my.cnfE /etc/apache2/apache2.conf
     elif [ "$2" = "mysql" ]; then
-        echo -e "\e[31m Config mysql \e[0m"
+        RED "Config mysql"
         sudo subl /etc/mysql/my.cnf
     else
         echo "php                >> edit php config"
@@ -974,7 +985,7 @@ elif [ "$1" = "config" ]; then
 elif [ "$1" = "post" ]; then
 
     if [ "$2" != "" ]; then
-        echo -e "\e[31m cur post  \e[0m"
+        RED "cur post "
 
         data=""
         if [ "$3" != "" ]; then
@@ -990,7 +1001,7 @@ elif [ "$1" = "post" ]; then
 elif [ "$1" = "svn" ]; then
 
     if [ "$2" = "commit" ]; then
-        echo -e "\e[31m Svn commit  \e[0m"
+        RED "Svn commit "
 
         DATE=`date +%Y-%m-%d`
         svn add --force .
@@ -998,13 +1009,13 @@ elif [ "$1" = "svn" ]; then
     fi
 
     if [ "$2" = "update" ]; then
-        echo -e "\e[31m Svn update  \e[0m"
+        RED "Svn update "
 
         svn update
     fi
 
     if [ "$2" = "status" ]; then
-        echo -e "\e[31m Svn update  \e[0m"
+        RED "Svn update "
 
         svn status
     fi
@@ -1018,7 +1029,7 @@ elif [ "$1" = "svn" ]; then
 elif [ "$1" = "redis" ]; then
 
     if [ "$2" = "clear" ]; then
-        echo -e "\e[31m Redis clear \e[0m"
+        RED "Redis clear"
         redis-cli flushall
     fi
 
@@ -1029,27 +1040,27 @@ elif [ "$1" = "redis" ]; then
 elif [ "$1" = "mail" ]; then
 
     if [ "$2" = "catch" ]; then
-        echo -e "\e[31m Run mail server for debuging  \e[0m"
+        RED "Run mail server for debuging "
         sudo python -m smtpd -n -c DebuggingServer localhost:25
     fi
 
     if [ "$2" = "start" ]; then
-        echo -e "\e[31m postfix start \e[0m"
+        RED "postfix start"
         sudo service postfix start
     fi
 
     if [ "$2" = "stop" ]; then
-        echo -e "\e[31m postfix stop \e[0m"
+        RED "postfix stop"
         sudo service postfix stop
     fi
 
     if [ "$2" = "restart" ]; then
-        echo -e "\e[31m postfix restart \e[0m"
+        RED "postfix restart"
         sudo service postfix restart
     fi
 
     if [ "$2" = "test" ]; then
-        echo -e "\e[31m postfix start \e[0m"
+        RED "postfix start"
         sudo service postfix stop
     fi
 
@@ -1064,7 +1075,7 @@ elif [ "$1" = "mail" ]; then
 elif [ "$1" = "port" ]; then
 
     if [ "$2" = "kill" ] && [ "$3" != "" ]; then
-        echo -e "\e[31m kill application using port $3 \e[0m"
+        RED "kill application using port $3"
         process=`sudo netstat -tulpn | grep :$3 | awk '{print $7}' | sed -e "s/\/.*//g"`
         if [ "$process" != "" ]; then
             cmd="sudo kill -9 $process"
