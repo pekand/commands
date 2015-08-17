@@ -418,7 +418,7 @@ elif [ "$1" = "schema" ] || [ "$1" = "doctrine" ]; then
     if [ "$2" = "dump" ]; then
         RED "Doctrine schema dump"
         cmd="Z d:s:u --dump-sql"
-        COLOR "$cmd" && eval $cmd
+        YELLOW "$cmd" && eval $cmd
     fi
 
     if [ "$2" = "" ]; then
@@ -1079,7 +1079,7 @@ elif [ "$1" = "port" ]; then
         process=`sudo netstat -tulpn | grep :$3 | awk '{print $7}' | sed -e "s/\/.*//g"`
         if [ "$process" != "" ]; then
             cmd="sudo kill -9 $process"
-            echo $cmd && eval $cmd
+            YELLOW $cmd && eval $cmd
         else
             echo "port is free"
         fi
