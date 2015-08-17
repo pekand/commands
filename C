@@ -8,13 +8,11 @@ done
 
 self="${0##*/}"
 scriptdir=`dirname "$BASH_SOURCE"`
-if [ -f "$scriptdir/passwordHash.txt" ];
-then
-    passwordHash=""
-else
+if [ -f "$scriptdir/passwordHash.txt" ]; then
     passwordHash=`cat $scriptdir/passwordHash.txt`
+else
+    passwordHash=""
 fi
-
 
 if [ "$1" = "bckg" ]; then
     if [ "$2" = "everlution" ]; then
@@ -80,6 +78,16 @@ if [ "$1" = "bckg" ]; then
                 rm /tmp/$FILENAME.sql
                 fi
             done
+        else
+            echo "wrong password"
+        fi
+    elif [ "$2" = "elastic" ]; then
+        read -s -p "Enter Password: " mypassword
+        hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
+        echo "$hash"
+        if [ "$passwordHash" = "$hash" ]; then
+            C search snapshot create snapshot_1
+            7z a -l -p"$mypassword" -mhe ~/Desktop/elastic-`date +"%Y-%m-%d-%H-%M-%S"`.7z /tmp/my_backup/
         else
             echo "wrong password"
         fi
@@ -316,6 +324,26 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         echo -e "\e[31m Elasticsearch indices create \e[0m"
         Z everlution:search:indices:create --force
 
+    elif [ "$2" = "snapshot" ] && [ "$3" = "list" ]; then
+        curl -XGET 'localhost:9200/_snapshot/my_backup/_all'
+
+    elif [ "$2" = "snapshot" ] && [ "$3" = "repository" ] && [ "$4" = "create" ]; then
+        mkdir /tmp/my_backup
+        chmod 777 /tmp/my_backup
+        curl -XPUT 'localhost:9200/_snapshot/my_backup' -d '{"type": "fs",  "settings": { "location": "/tmp/my_backup" }}' | isubl
+
+    elif [ "$2" = "snapshot" ] && [ "$3" = "create" ] && [ "$4" != "" ]; then
+        curl -XPUT 'localhost:9200/_snapshot/my_backup/snapshot_1?wait_for_completion=true'
+
+    elif [ "$2" = "snapshot" ] && [ "$3" = "restore" ] && [ "$4" != "" ]; then
+        curl -XPOST 'localhost:9200/_snapshot/my_backup/$4/_restore?wait_for_completion=true'
+
+    elif [ "$2" = "snapshot" ] && [ "$3" = "delete" ] && [ "$4" != "" ]; then
+        curl -XDELETE 'localhost:9200/_snapshot/my_backup/$4'
+
+    elif [ "$2" = "snapshot" ] && [ "$3" = "status" ] && [ "$4" != "" ]; then
+        curl -XGET 'localhost:9200/_snapshot/my_backup/$4/_status'
+
     elif [ "$2" != "" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
         echo -e "\e[31mElastic by id $2\e[0m"
         curl -s -XPOST "http://localhost:9200/$2/$3/_search?pretty=true" -d "{\"query\": { \"match\": {\"_id\": $4} }}" | isubl
@@ -345,6 +373,11 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         echo "  delete all                 >> remove all indexies"
         echo "  delete {index}             >> stop server"
         echo "  reset                      >> resrt elasticsearch indices for current project"
+        echo "  snapshot repository create >>"
+        echo "  snapshot create {name}     >>"
+        echo "  snapshot restore {name}    >>"
+        echo "  snapshot delete {name}     >>"
+        echo "  snapshot status {name}     >>"
         echo "  create                     >> elasticsearch indices create"
         echo "  {index} {entity} {id}      >> find element"
         echo "  {index} {name}             >> list all elenets in index"
