@@ -456,7 +456,16 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
             mysqldump -h localhost -u root -proot --add-drop-database --databases "$4" | gzip > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql.gz"
         elif [ "$3" = "raw" ] && [ "$4" = "drop" ] && [ "$5" != "" ]; then
             RED "Mysql export to file with drop"
-            mysqldump -h localhost -u root -proot --add-drop-database --databases "$5" > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
+            mysqldump -h localhost -u root -proot --add-drop-database --databases "$5" > "$5-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
+        elif [ "$3" = "raw" ] && [ "$4" = "data" ] && [ "$5" != "" ]; then
+            RED "Mysql export to file with drop"
+            mysqldump -h localhost -u root -proot --no-create-info --databases "$5" > "$5-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
+        elif [ "$3" = "raw" ] && [ "$4" = "extended" ] && [ "$5" != "" ]; then
+            RED "Mysql export to file with drop"
+            mysqldump -h localhost -u root -proot --no-create-info --skip-extended-insert --databases "$5" > "$5-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
+        elif [ "$3" = "raw" ] && [ "$4" = "structure" ] && [ "$5" != "" ]; then
+            RED "Mysql export to file with drop"
+            mysqldump -h localhost -u root -proot --no-data --skip-add-drop-table --databases "$5" > "$5-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
         elif [ "$3" = "raw" ] && [ "$4" != "" ]; then
             RED "Mysql export to file without drop"
             mysqldump -h localhost -u root -proot --skip-add-drop-table --databases "$4" > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql"
@@ -526,6 +535,9 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  structure {db}             >>"
         echo "  export compress {db}       >>  export and compress"
         echo "  export raw drop {db}       >>  export to raw sql file with drop commands"
+        echo "  export raw data {db}       >>  export to raw sql file with only data"
+        echo "  export raw extended {db}   >>  export to raw sql file with only data and insert per line"
+        echo "  export raw structure {db}  >>  export to raw sql file with only structure"
         echo "  export raw {db}            >>  export to raw sql file"
         echo "  export stream {db}         >>  export to editor"
         echo "  import {db} {file}         >>  import file to db"
@@ -1089,6 +1101,16 @@ elif [ "$1" = "port" ]; then
         echo "kill {port}"
     fi
 
+elif [ "$1" = "file" ]; then
+
+    if [ "$2" = "last" ] && [ "$3" = "changed" ]; then
+        find . -printf "%TY-%Tm-%Td %TH:%TM:%TM %p\n" | sort -r | isubl
+    fi
+
+    if [ "$2" = "" ]; then
+        echo "last changed > display files ordered by "
+    fi
+
 else
 
     if [ "$2" != "" ]; then
@@ -1126,5 +1148,6 @@ else
         echo "post                         >> send data with curl"
         echo "svn                          >> commands"
         echo "port                         >> "
+        echo "file                         >> "
     fi
 fi
