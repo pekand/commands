@@ -213,12 +213,12 @@ elif [ "$1" = "git" ]; then
 elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "rights" ] || [ "$1" = "permission" ] || [ "$1" = "permissions" ]; then
 
     if [ "$2" = "owner" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet owner"
+        RED "Set owner"
         #nastavy prava pre web apache adresar
         sudo chown www-data:www-data -R $3
 
     elif [ "$2" = "symfony" ]; then
-        echo -e "\e[31mSet premission"
+        RED "Set premission"
         #nastavy prava pre symfony adresar
 
         if [ "$3" != "" ]; then
@@ -231,7 +231,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
         sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX app/cache app/logs
 
     elif [ "$2" = "filebundle" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet premission for project width filebundle"
+        RED "Set premission for project width filebundle"
         #nastavy prava pre symfony adresar s filebundle
         cd $3
         mkdir web/uploads
@@ -241,13 +241,13 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
         sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads/files
 
     elif [ "$2" = "default" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mSet server premission"
+        RED "Set server premission"
         #nastavy adresar
         sudo chown -R www-data:www-data "$3"
         sudo find "$3" -type d -exec chmod 775 {} \;
         sudo find "$3" -type f -exec chmod 664 {} \;
     elif [ "$2" = "ignore" ]; then
-        echo -e "\e[31mGit ignore premission"
+        RED "Git ignore premission"
         git config core.fileMode false
 
     else
@@ -274,11 +274,11 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         app/console es:reindex 'one-by-one' --force --no-interaction
 
     elif [ "$2" = "version" ]; then
-        echo -e "\e[31mVersion"
+        RED "Version"
         curl "localhost:9200/"
 
     elif [ "$2" = "info" ]; then
-        echo -e "\e[31mInfo"
+        RED "Info"
         curl -XGET "http://localhost:9200/_mapping?pretty=true" | isubl
 
     elif [ "$2" = "indexies" ] || [ "$2" = "index" ]; then
@@ -286,7 +286,7 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         curl "http://localhost:9200/_aliases?pretty=true"
 
     elif [ "$2" = "stats" ]; then
-        echo -e "\e[31mIndices"
+        RED "Indices"
         curl "localhost:9200/_stats?pretty=true" | isubl
 
 
@@ -345,11 +345,11 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
         curl -XGET 'localhost:9200/_snapshot/my_backup/$4/_status'
 
     elif [ "$2" != "" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
-        echo -e "\e[31mElastic by id $2"
+        RED "Elastic by id $2"
         curl -s -XPOST "http://localhost:9200/$2/$3/_search?pretty=true" -d "{\"query\": { \"match\": {\"_id\": $4} }}" | isubl
 
     elif [ "$2" != "" ] && [ "$3" != "" ]; then
-        echo -e "\e[31mElastic $2"
+        RED "Elastic $2"
         curl -s -XPOST "http://localhost:9200/$2/$3/_search?size=10000" -d '{"query": {"match_all": {}}}' | python -mjson.tool | isubl
 
     elif [ "$2" != "" ]; then
