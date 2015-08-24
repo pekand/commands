@@ -2,4 +2,146 @@
 
 # print in color
 color="\e[1;33m"
-echo -e "$color$@\e[0m"
+text=$@
+
+#standard
+text="${text/\<black\>/\\e\[0\;30m}"
+text="${text/\<\/black\>/\\e[0m}"
+
+text="${text/\<red\>/\\e\[0\;31m}"
+text="${text/\<\/red\>/\\e[0m}"
+
+text="${text/\<green\>/\\e\[0\;32m}"
+text="${text/\<\/green\>/\\e[0m}"
+
+text="${text/\<yellow\>/\\e\[0\;33m}"
+text="${text/\<\/yellow\>/\\e[0m}"
+
+text="${text/\<blue\>/\\e\[0\;34m}"
+text="${text/\<\/blue\>/\\e[0m}"
+
+text="${text/\<purple\>/\\e\[0\;35m}"
+text="${text/\<\/purple\>/\\e[0m}"
+
+text="${text/\<cyan\>/\\e\[0\;36m}"
+text="${text/\<\/cyan\>/\\e[0m}"
+
+text="${text/\<white\>/\\e\[0\;37m}"
+text="${text/\<\/white\>/\\e[0m}"
+
+#bold
+text="${text/\<bblack\>/\\e\[1\;30m}"
+text="${text/\<\/bblack\>/\\e[0m}"
+
+text="${text/\<bred\>/\\e\[1\;31m}"
+text="${text/\<\/bred\>/\\e[0m}"
+
+text="${text/\<bgreen\>/\\e\[1\;32m}"
+text="${text/\<\/bgreen\>/\\e[0m}"
+
+text="${text/\<byellow\>/\\e\[1\;33m}"
+text="${text/\<\/byellow\>/\\e[0m}"
+
+text="${text/\<bblue\>/\\e\[1\;34m}"
+text="${text/\<\/bblue\>/\\e[0m}"
+
+text="${text/\<bpurple\>/\\e\[1\;35m}"
+text="${text/\<\/bpurple\>/\\e[0m}"
+
+text="${text/\<bcyan\>/\\e\[1\;36m}"
+text="${text/\<\/bcyan\>/\\e[0m}"
+
+text="${text/\<bwhite\>/\\e\[1\;37m}"
+text="${text/\<\/bwhite\>/\\e[0m}"
+
+#underline
+
+text="${text/\<ublack\>/\\e\[4\;30m}"
+text="${text/\<\/ublack\>/\\e[0m}"
+
+text="${text/\<ured\>/\\e\[4\;31m}"
+text="${text/\<\/ured\>/\\e[0m}"
+
+text="${text/\<ugreen\>/\\e\[4\;32m}"
+text="${text/\<\/ugreen\>/\\e[0m}"
+
+text="${text/\<uyellow\>/\\e\[4\;33m}"
+text="${text/\<\/uyellow\>/\\e[0m}"
+
+text="${text/\<ublue\>/\\e\[4\;34m}"
+text="${text/\<\/ublue\>/\\e[0m}"
+
+text="${text/\<upurple\>/\\e\[4\;35m}"
+text="${text/\<\/upurple\>/\\e[0m}"
+
+text="${text/\<ucyan\>/\\e\[4\;36m}"
+text="${text/\<\/ucyan\>/\\e[0m}"
+
+text="${text/\<uwhite\>/\\e\[4\;37m}"
+text="${text/\<\/uwhite\>/\\e[0m}"
+
+#background
+
+text="${text/\<hblack\>/\\e\[40m}"
+text="${text/\<\/hblack\>/\\e[0m}"
+
+text="${text/\<hred\>/\\e\[41m}"
+text="${text/\<\/hred\>/\\e[0m}"
+
+text="${text/\<hgreen\>/\\e\[42m}"
+text="${text/\<\/hgreen\>/\\e[0m}"
+
+text="${text/\<hyellow\>/\\e\[43m}"
+text="${text/\<\/hyellow\>/\\e[0m}"
+
+text="${text/\<hblue\>/\\e\[44m}"
+text="${text/\<\/hblue\>/\\e[0m}"
+
+text="${text/\<hpurple\>/\\e\[45m}"
+text="${text/\<\/hpurple\>/\\e[0m}"
+
+text="${text/\<hcyan\>/\\e\[46m}"
+text="${text/\<\/hcyan\>/\\e[0m}"
+
+text="${text/\<hwhite\>/\\e\[47m}"
+text="${text/\<\/hwhite\>/\\e[0m}"
+
+echo -e "$text"
+
+#txtblk='\e[0;30m' # black - Regular
+#txtred='\e[0;31m' # red
+#txtgrn='\e[0;32m' # green
+#txtylw='\e[0;33m' # yellow
+#txtblu='\e[0;34m' # blue
+#txtpur='\e[0;35m' # purple
+#txtcyn='\e[0;36m' # cyan
+#txtwht='\e[0;37m' # white
+
+#bldblk='\e[1;30m' # Black - Bold
+#bldred='\e[1;31m' # Red
+#bldgrn='\e[1;32m' # Green
+#bldylw='\e[1;33m' # Yellow
+#bldblu='\e[1;34m' # Blue
+#bldpur='\e[1;35m' # Purple
+#bldcyn='\e[1;36m' # Cyan
+#bldwht='\e[1;37m' # White
+
+#unkblk='\e[4;30m' # Black - Underline
+#undred='\e[4;31m' # Red
+#undgrn='\e[4;32m' # Green
+#undylw='\e[4;33m' # Yellow
+#undblu='\e[4;34m' # Blue
+#undpur='\e[4;35m' # Purple
+#undcyn='\e[4;36m' # Cyan
+#undwht='\e[4;37m' # White
+
+#bakblk='\e[40m'   # Black - Background
+#bakred='\e[41m'   # Red
+#bakgrn='\e[42m'   # Green
+#bakylw='\e[43m'   # Yellow
+#bakblu='\e[44m'   # Blue
+#bakpur='\e[45m'   # Purple
+#bakcyn='\e[46m'   # Cyan
+#bakwht='\e[47m'   # White
+
+#txtrst='\e[0m'    # Text Reset

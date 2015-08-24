@@ -4,8 +4,7 @@
 
 repo=$(basename `git rev-parse --show-toplevel`)
 branch=$(git symbolic-ref --short HEAD)
-echo "Repository: $repo"
-echo "Branch: $branch"
+
 br=$1
 re='^[0-9]+$'
 if [[ "$br" =~ $re ]] ; then
@@ -13,7 +12,11 @@ if [[ "$br" =~ $re ]] ; then
    echo "rename to $br"
 fi
 
-if [ "$br" != "" ]; then
+if [ "$br" = "list" ]; then
+    echo "-switch to local branch"
+    cmd="git branch -ar;git branch"
+    echo $cmd && eval $cmd
+elif [ "$br" != "" ]; then
     echo "git fetch --all"
     git fetch --all
 
@@ -35,7 +38,5 @@ if [ "$br" != "" ]; then
         fi
     fi
 else
-    echo "git branch"
-    git branch -ar
-    git branch
+    COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
 fi
