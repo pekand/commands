@@ -174,7 +174,11 @@ elif [ "$1" = "git" ]; then
 
     elif [ "$2" = "reset" ] && [ "$3" = "develop" ]; then
         git fetch origin
-        git reset --hard origin/develop
+        git reset --hard origin/develop    
+
+    elif [ "$2" = "reset" ] && [ "$3" = "merge" ]; then
+        RED "Reset merge and cancel changes"
+        git reset --hard HEAD
 
     elif [ "$2" = "branch" ] && [ "$3" = "delete" ]; then
         git branch -D "$4"
@@ -205,6 +209,7 @@ elif [ "$1" = "git" ]; then
         echo "  reset add                  >> reset add"
         echo "  reset commit               >> reset commit"
         echo "  reset develop              >> reset from upstream to local upstream"
+        echo "  reset merge                >> reset merge and discard chengies"
         echo "  branch delete {name}       >> delete branch"
         echo "  branch new {name}          >> create branch"
         echo "  branch get {name}          >> get branch from origin"
