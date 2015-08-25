@@ -636,6 +636,29 @@ elif [ "$1" = "server" ]; then
         echo "site disable {site}"
     fi
 
+elif [ "$1" = "php" ]; then
+
+    if [ "$2" = "modules" ]; then
+        RED "Installed php modules"
+        php -m
+    fi
+
+    if [ "$2" = "enable" ] && [ "$3" != "" ]; then
+        RED "Enable php module $3"
+        sudo php5enmod $3
+    fi
+
+    if [ "$2" = "disable" ] && [ "$3" != "" ]; then
+        RED "Diasble php module $3"
+        sudo php5dismod $3
+    fi
+
+    if [ "$2" = "" ]; then
+        echo "php                        >>"
+        echo "  modules                  >>"
+        echo "  enable {modulName}       >>"
+    fi
+
 elif [ "$1" = "restart" ]; then
 
     if [ "$2" = "server" ]; then
@@ -1132,6 +1155,7 @@ else
         echo "sql {db} {query}             >> "
         echo "dns                          >> manage dns server"
         echo "server                       >> manage apache server"
+        echo "php                          >> php configuration"
         echo "restart                      >>"
         echo "edit                         >>"
         echo "validate                     >> validation"
