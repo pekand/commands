@@ -106,7 +106,7 @@ function getcolumns($db, $dbname, $dbtable)
     $sql = mysql_query("SHOW COLUMNS FROM ".$dbtable.";");
 
     if (!$sql) {
-        echo "Table not exist!\n";die;
+        echo "Error: e001: Table not exist!\n";die;
     }
 
     $data = array();
@@ -135,7 +135,7 @@ function searchfor($db, $word, $dbname_select = array(), $table_select = array()
         $ecode = mysql_select_db($dbname, $db);
 
         if (!$ecode) {
-            echo "Database not exist!\n";die;
+            echo "Error: e002: Database not exist!\n";die;
         }
 
         $tables = array();
@@ -165,7 +165,7 @@ function searchfor($db, $word, $dbname_select = array(), $table_select = array()
 
             $like='';
             for($i=0;$i<count($columns);$i++) {
-                $like .= " ".$columns[$i]." like '%".mysql_real_escape_string($word)."%'";
+                $like .= " `".$columns[$i]."` like '%".mysql_real_escape_string($word)."%'";
                 if($i!=count($columns)-1) $like .= " OR";
             }
 
@@ -173,7 +173,7 @@ function searchfor($db, $word, $dbname_select = array(), $table_select = array()
             if (count($view_columns)>0) {
                 $order="ORDER BY";
                 for($i=0;$i<count($view_columns);$i++) {
-                    $order .= " ".$view_columns[$i]." ASC";
+                    $order .= " `".$view_columns[$i]."` ASC";
                     if($i!=count($view_columns)-1) $order .= ",";
                 }
             }
@@ -185,7 +185,7 @@ function searchfor($db, $word, $dbname_select = array(), $table_select = array()
             $sql = mysql_query($query);
 
             if (!$sql) {
-                echo "Column not exist!\n";die;
+                echo "Error: e003: Column not exist!\n";die;
             }
 
             while ($sql && $row = mysql_fetch_assoc($sql)) {
@@ -221,7 +221,7 @@ WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME ='products';*/
 
     $dbstructure = array();
     if (!$sql) {
-        echo "Table not exist!\n";die;
+        echo "Error: e004: Table not exist!\n";die;
     }
 
     $data = array();
@@ -251,7 +251,7 @@ function getIndexies($db, $dbname)
 
     $dbstructure = array();
     if (!$sql) {
-        echo "Table not exist!\n";die;
+        echo "Error: e005: Table not exist!\n";die;
     }
 
     $data = array();
@@ -282,7 +282,7 @@ function getForeginKey($db, $dbname)
 
     $dbstructure = array();
     if (!$sql) {
-        echo "Table not exist!\n";die;
+        echo "Error: e006: Table not exist!\n";die;
     }
 
     $data = array();
@@ -315,7 +315,7 @@ function ForeginKeyClear($db, $dbname, $fkey)
 
     $dbstructure = array();
     if (!$sql) {
-        echo "Table not exist!\n";die;
+        echo "Error: e007: Table not exist!\n";die;
     }
 
     $data = array();
@@ -336,7 +336,7 @@ function ForeginKeyClear($db, $dbname, $fkey)
             $query = "UPDATE `".$tablename."` SET `".$columnname."`=NULL WHERE true;";
             $res = mysql_query($query, $db);
             if (!$res) {
-                echo 'ERROR: '.mysql_error($db);die;
+                echo 'Error: e008: '.mysql_error($db);die;
             }
         }
 
@@ -351,7 +351,7 @@ function getTableNames($db, $dbname, $table)
 
     $sql = mysql_query("SHOW TABLES FROM {$dbname}", $db);
     if (!$sql) {
-        echo 'ERROR: '.mysql_error($db);die;
+        echo 'Error: e009: '.mysql_error($db);die;
     }
 
     $data = array();
@@ -368,7 +368,7 @@ function getDatabaseNames($db, $dbname, $table)
 
     $sql = mysql_query("SHOW DATABASES", $db);
     if (!$sql) {
-        echo 'ERROR: '.mysql_error($db);die;
+        echo 'Error: e010: '.mysql_error($db);die;
     }
 
     $data = array();
