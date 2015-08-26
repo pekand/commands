@@ -1,0 +1,21 @@
+#!/usr/bin/php5
+<?php
+
+# generate calendar
+
+$params = $argv;
+array_shift($params);
+
+if (!isset($params[0]) || !isset($params[1])) {
+    echo "Get calendar";
+    echo "CAL {dateStart(Y-m-d)} {dateStop(Y-m-d)}";
+    exit;
+}
+
+$dateStart = DateTime::createFromFormat('Y-m-d', $params[0]);
+$dateStop = DateTime::createFromFormat('Y-m-d', $params[1]);
+
+while ($dateStart <= $dateStop) {
+   echo  $dateStart->format('Y-m-d D')."\n";
+   $dateStart->add(new DateInterval('P1D'));
+}
