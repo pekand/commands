@@ -19,10 +19,11 @@ if [ "$1" = "bckg" ]; then
         read -s -p "Enter Password: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
+        mkdir ~/Desktop/`date +"%Y-%m-%d"`
         if [ "$passwordHash" = "$hash" ]; then
-            7z a -l -p"$mypassword" -mhe ~/Desktop/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
-            7z a -l -p"$mypassword" -mhe ~/Desktop/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/
-            7z a -l -p"$mypassword" -mhe ~/Desktop/data-`date +"%Y-%m-%d-%H-%M-%S"`.7z /home/kerberos/Desktop/Data/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/data-`date +"%Y-%m-%d-%H-%M-%S"`.7z /home/kerberos/Desktop/Data/
         else
             echo "wrong password"
         fi
@@ -55,9 +56,11 @@ if [ "$1" = "bckg" ]; then
         rm -Rf /var/www/src/spaceSpy/app/cache/prod/*
         rm -Rf /var/www/src/spaceSpy/app/logs/*
 
+        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+
         if [ "$passwordHash" = "$hash" ]; then
             for file in /var/www/src/*; do
-                7z a -l -p"$mypassword" -mhe ~/Desktop/src-${file##*/}-`date +"%Y-%m-%d-%H-%M-%S"`.7z /var/www/src/${file##*/}/
+                7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/src-${file##*/}-`date +"%Y-%m-%d-%H-%M-%S"`.7z /var/www/src/${file##*/}/
             done
         else
             echo "wrong password"
@@ -67,6 +70,8 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
+        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+
         if [ "$passwordHash" = "$hash" ]; then
 
             for I in $(mysql -e 'show databases' -s --skip-column-names -h localhost -u root -proot); do
@@ -74,7 +79,7 @@ if [ "$1" = "bckg" ]; then
                 FILENAME=db-$I-`date +"%Y-%m-%d-%H-%M-%S"`
                 echo "filename = $FILENAME"
                 mysqldump -h localhost -u root -proot --add-drop-database --databases $I  >/tmp/$FILENAME.sql
-                7z a -l -p"$mypassword" -mhe ~/Desktop/$FILENAME.7z /tmp/$FILENAME.sql
+                7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/$FILENAME.7z /tmp/$FILENAME.sql
                 rm /tmp/$FILENAME.sql
                 fi
             done
@@ -85,9 +90,11 @@ if [ "$1" = "bckg" ]; then
         read -s -p "Enter Password: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
+
+        mkdir ~/Desktop/`date +"%Y-%m-%d"`
         if [ "$passwordHash" = "$hash" ]; then
             C search snapshot create snapshot_1
-            7z a -l -p"$mypassword" -mhe ~/Desktop/elastic-`date +"%Y-%m-%d-%H-%M-%S"`.7z /tmp/my_backup/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/elastic-`date +"%Y-%m-%d-%H-%M-%S"`.7z /tmp/my_backup/
         else
             echo "wrong password"
         fi
@@ -95,8 +102,11 @@ if [ "$1" = "bckg" ]; then
         read -s -p "Enter Password: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
+
+        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+        
         if [ "$passwordHash" = "$hash" ]; then
-            7z a -l -p$mypassword -mhe ~/Desktop/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
+            7z a -l -p$mypassword -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
         else
             echo "wrong password"
         fi
@@ -597,6 +607,14 @@ elif [ "$1" = "server" ]; then
         sudo /bin/systemctl restart mysql.service
         sudo /bin/systemctl restart redis-server.service
         sudo /bin/systemctl restart apache2.service
+        echo "DONE"
+
+    elif [ "$2" = "kill" ]; then
+        RED "Elastic, mysql, redis and apache restart"
+        sudo /bin/systemctl stop elasticsearch.service
+        sudo /bin/systemctl stop mysql.service
+        sudo /bin/systemctl stop redis-server.service
+        sudo /bin/systemctl stop apache2.service
         echo "DONE"
 
     elif [ "$2" = "start" ]; then
@@ -1114,6 +1132,16 @@ elif [ "$1" = "mail" ]; then
 
 elif [ "$1" = "port" ]; then
 
+    if [ "$2" = "list" ] && [ "$3" == "" ]; then
+        RED "List all application using ports"
+        sudo netstat -peanut
+    fi
+
+    if [ "$2" = "list" ] && [ "$3" != "" ]; then
+        RED "List application using port $3"
+        sudo netstat -peant | grep ":$3 "
+    fi
+
     if [ "$2" = "kill" ] && [ "$3" != "" ]; then
         RED "kill application using port $3"
         process=`sudo netstat -tulpn | grep :$3 | awk '{print $7}' | sed -e "s/\/.*//g"`
@@ -1126,6 +1154,8 @@ elif [ "$1" = "port" ]; then
     fi
 
     if [ "$2" = "" ]; then
+        echo "list"
+        echo "list {port}"
         echo "kill {port}"
     fi
 
