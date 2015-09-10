@@ -23,6 +23,6 @@ elif [ "$repo" = "mantaapi" ]; then
     echo "git pull origin master"
     git pull origin master
 else
-    echo "git pull origin develop"
-    git pull origin develop
+    echo "git pull origin $branch"
+    git pull origin $branch
 fi

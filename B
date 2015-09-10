@@ -39,4 +39,7 @@ elif [ "$br" != "" ]; then
     fi
 else
     COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
+    echo "list     >> list all"
+    echo "{num}    >> create new or switch to 'feature-{num}'"
+    echo "{name}   >> create new or switch"
 fi

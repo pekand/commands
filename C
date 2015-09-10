@@ -621,7 +621,12 @@ elif [ "$1" = "server" ]; then
         sudo service apache2 start
 
     elif [ "$2" = "stop" ]; then
-        sudo service apache2 stop
+        RED "Elastic, mysql, redis and apache restart"
+        sudo /bin/systemctl stop elasticsearch.service
+        sudo /bin/systemctl stop mysql.service
+        sudo /bin/systemctl stop redis-server.service
+        sudo /bin/systemctl stop apache2.service
+        echo "DONE"
 
     elif [ "$2" = "site" ]; then
 
@@ -1130,7 +1135,7 @@ elif [ "$1" = "mail" ]; then
         echo "test"
     fi
 
-elif [ "$1" = "port" ]; then
+elif [ "$1" = "port" ] || [ "$1" = "ports" ]; then
 
     if [ "$2" = "list" ] && [ "$3" == "" ]; then
         RED "List all application using ports"
