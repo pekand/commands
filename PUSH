@@ -47,7 +47,7 @@ elif [ "$repo" = "ats" ]; then
     cmd="git push origin $branch"
     echo $cmd
     eval $cmd
-    firefox "https://github.com/everlution/ATS/compare/develop...$branch"
+    firefox "https://github.com/everlution/ATS/compare/master...$branch"
 elif [ "$repo" = "spaceSpy" ]; then
     cmd="git push origin $branch"
     echo $cmd
