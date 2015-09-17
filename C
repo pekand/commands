@@ -168,6 +168,30 @@ elif [ "$1" = "git" ]; then
     if [ "$2" = "log" ]; then
         git log --stat | isubl
 
+    elif [ "$2" = "config" ]; then
+        git config --list
+
+
+    elif [ "$2" = "new" ] && [ "$3" = "files" ] && [ "$4" = "" ]; then
+        branch=$(git symbolic-ref --short HEAD)
+        RED "New files in origin/$branch"
+        git diff --name-only origin/$branch
+
+    elif [ "$2" = "new" ] && [ "$3" = "files" ] && [ "$4" != "" ]; then
+        branch=$(git symbolic-ref --short HEAD)
+        RED "New files in origin/$branch"
+        git diff --name-only origin/$branch..$4
+
+    elif [ "$2" = "new" ] && [ "$3" = "" ]; then
+        branch=$(git symbolic-ref --short HEAD)
+        RED "New files in origin/$branch"
+        git diff origin/$branch
+
+    elif [ "$2" = "new" ] && [ "$3" != "" ]; then
+        branch=$(git symbolic-ref --short HEAD)
+        RED "New files in origin/$branch..$branch"
+        git diff origin/$branch..$3
+
     elif [ "$2" = "tree" ]; then
         git log --pretty=format:'%h : %s' --graph | isubl
 
@@ -184,7 +208,7 @@ elif [ "$1" = "git" ]; then
 
     elif [ "$2" = "reset" ] && [ "$3" = "develop" ]; then
         git fetch origin
-        git reset --hard origin/develop    
+        git reset --hard origin/develop
 
     elif [ "$2" = "reset" ] && [ "$3" = "merge" ]; then
         RED "Reset merge and cancel changes"
@@ -214,6 +238,8 @@ elif [ "$1" = "git" ]; then
     else
         echo "git                          >> git commands"
         echo "  log                        >> show commits log"
+        echo "  config                     >> show config"
+        echo "  new                        >> list new files"
         echo "  tree                       >> show commits log as tree"
         echo "  remote                     >> show remote"
         echo "  reset add                  >> reset add"
