@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#symfony console shortcut
+#docker 
 
 repo=$(basename `git rev-parse --show-toplevel`)
 
@@ -41,6 +41,18 @@ if [ "$repo" = "feed" ]; then
 
     if [ "$1" = "console" ]; then
         ./scripts/ssh.sh docker_appphp_1
+    fi
+
+    if [ "$1" = "cmd" ]; then
+        docker exec docker_appphp_1 app/console $2
+    fi
+
+    if [ "$1" = "reindex" ]; then
+        docker exec docker_appphp_1 app/console es:reindex 'one-by-one' --force --no-interaction
+    fi
+
+    if [ "$1" = "schema" ] && [ "$2" = "update" ]; then
+        docker exec docker_appphp_1 app/console doctrine:schema:update --force --dump-sql
     fi
 
 fi
