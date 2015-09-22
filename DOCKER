@@ -1,0 +1,46 @@
+#!/bin/bash
+
+#symfony console shortcut
+
+repo=$(basename `git rev-parse --show-toplevel`)
+
+if [ "$repo" = "feed" ]; then
+    cd /var/www/src/$repo/docker
+
+    if [ "$1" = "status" ]; then
+        ./scripts/status.sh
+    fi
+
+    if [ "$1" = "clean" ]; then
+        ./scripts/clear-containers.sh
+    fi
+
+    if [ "$1" = "info" ]; then
+        ./scripts/info.sh
+    fi
+
+    if [ "$1" = "init" ]; then
+        ./scripts/init.sh
+    fi
+
+    if [ "$1" = "start" ]; then
+        ./scripts/up.sh
+    fi
+
+    if [ "$1" = "stop" ]; then
+        ./scripts/stop.sh
+    fi
+
+    if [ "$1" = "ssh" ] && [ "$2" != "" ]; then
+        ./scripts/ssh.sh $2
+    fi
+
+    if [ "$1" = "db" ]; then
+        ./scripts/ssh.sh docker_mysql_1
+    fi
+
+    if [ "$1" = "console" ]; then
+        ./scripts/ssh.sh docker_appphp_1
+    fi
+
+fi
