@@ -69,6 +69,11 @@ elif [ "$repo" = "script" ]; then
         cmd="git push origin $branch"
         echo $cmd && eval $cmd
     fi;
+elif [ "$repo" = "feed" ]; then
+    cmd="git push origin $branch"
+    echo $cmd
+    eval $cmd
+    firefox "https://github.com/everlutionsk/feed/compare/develop...$branch"
 else
     #cmd="git push origin $branch"
     #echo $cmd
