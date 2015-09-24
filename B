@@ -16,6 +16,8 @@ if [ "$br" = "list" ]; then
     echo "-switch to local branch"
     cmd="git branch -ar;git branch"
     echo $cmd && eval $cmd
+elif [ "$br" = "find" ] && [ "$2" != "" ]; then
+    B list | grep $2
 elif [ "$br" != "" ]; then
     echo "git fetch --all"
     git fetch --all
