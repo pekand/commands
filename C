@@ -169,8 +169,12 @@ elif [ "$1" = "git" ]; then
         git log --stat | isubl
 
     elif [ "$2" = "config" ]; then
-        git config --list
+        git config --list    
 
+    elif [ "$2" = "graph" ]; then
+
+        #git log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+        git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
 
     elif [ "$2" = "new" ] && [ "$3" = "files" ] && [ "$4" = "" ]; then
         branch=$(git symbolic-ref --short HEAD)
