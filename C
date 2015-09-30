@@ -104,7 +104,7 @@ if [ "$1" = "bckg" ]; then
         echo "$hash"
 
         mkdir ~/Desktop/`date +"%Y-%m-%d"`
-        
+
         if [ "$passwordHash" = "$hash" ]; then
             7z a -l -p$mypassword -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
         else
@@ -544,6 +544,12 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         mysql -uroot -proot -e "
         Drop database $3;"
 
+    elif [ "$2" = "purge" ]; then
+        RED "Database $3 drop and create"
+        $self db export compress $3
+        $self db drop $3
+        $self db create $3
+
     elif [ "$2" = "reset" ]; then
         RED "Database reset $3"
         mysql -uroot -proot -e "Drop database $3;"
@@ -591,6 +597,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  import compressed {file.sql.gz} >>  import file to db"
         echo "  query {db} {query}         >> "
         echo "  drop {dbname}              >> drop database"
+        echo "  purge {dbname}             >> backup drop and create database"
         echo "  reset {dbname}             >> drop database and create"
         echo "  user create {db} {username}>> create user {username} in {db}"
         echo "  query {query}              >> "
