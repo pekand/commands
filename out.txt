@@ -1,3 +1,0 @@
-sdfsd /home/kerberostest
-test
-'test'
