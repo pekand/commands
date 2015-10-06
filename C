@@ -214,6 +214,12 @@ elif [ "$1" = "git" ]; then
         git fetch origin
         git reset --hard origin/develop
 
+    elif [ "$2" = "revert" ] && [ "$3" != "" ]; then
+        RED "Git revert $3 commits"
+        branch=$(git symbolic-ref --short HEAD)
+        cmd="git revert $branch~$3..$branch"
+        YELLOW "$cmd" && eval $cmd
+
     elif [ "$2" = "reset" ] && [ "$3" = "merge" ]; then
         RED "Reset merge and cancel changes"
         git reset --hard HEAD
@@ -250,6 +256,7 @@ elif [ "$1" = "git" ]; then
         echo "  reset commit               >> reset commit"
         echo "  reset develop              >> reset from upstream to local upstream"
         echo "  reset merge                >> reset merge and discard chengies"
+        echo "  revert {num}               >> revert last {num} commits"
         echo "  branch delete {name}       >> delete branch"
         echo "  branch new {name}          >> create branch"
         echo "  branch get {name}          >> get branch from origin"
