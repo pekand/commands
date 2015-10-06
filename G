@@ -25,6 +25,9 @@ if [ "$1" = "url" ]; then
 
 elif [ "$1" = "all" ]; then
     time grep -nri --color=always "$2" . | more
+elif [ "$1" = "open" ]; then
+    files=$(grep -lnri "$2" . 2>/dev/null)
+    subl $files
 else
     time grep -nri --include='*.css' --include='*.js' --include='*.php' --include='*.xml' --include='*.json' --include='*.htm' --include='*.html' --include='*.twig' --include='*.txt' --include='*.yml' --color=always --exclude-dir="TransferV2" --exclude-dir="cache" --exclude-dir="web" "$@" . | more
 fi
