@@ -1218,6 +1218,11 @@ elif [ "$1" = "file" ]; then
         echo "last changed > display files ordered by "
     fi
 
+elif [ "$1" = "hash" ]; then
+        read -s -p "Enter string: " mypassword
+        hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
+        echo "$hash"
+
 else
 
     if [ "$2" != "" ]; then
@@ -1257,5 +1262,6 @@ else
         echo "svn                          >> commands"
         echo "port                         >> "
         echo "file                         >> "
+        echo "hash                         >> create sha256 hash"
     fi
 fi
