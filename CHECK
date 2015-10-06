@@ -1,35 +1,27 @@
 #!/bin/bash
 
-# switch or create branch shortcut
+# check changed php files
 
-#repo=$(basename `git rev-parse --show-toplevel`)
-#branch=$(git symbolic-ref --short HEAD)
-
-#br=$1
-#re='^[0-9]+$'
-#if [[ "$br" =~ $re ]] ; then
-#   br=feature-$br
-#   echo "rename to $br"
-#fi
-
-#for i in *.php; do php -l $i; done
-
-#-zober subori ktore boli zmenene
-#-tie ktore maju php priponu
-#-prejst ich a skontrolovat
-
-files=$(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)
-#echo $files
-
-echo "$files" | while read file
-do
-   if [ ${file: -4} == ".php" ]; then
-      COLOR "<bblue>$file</bblue>"
-      COLOR "<bred>SYNTAX</bred>"
-      php -l $file
-      COLOR "<bred>MESS</bred>"
-      phpmd $file text /home/kerberos/Data/phpstorm/cleancode/cleancode.xml
-      COLOR "<bred>SNIFFER</bred>"
-      phpcs $file --standard=PSR2 --encoding=utf-8 --report=full
-   fi
-done
+if [ "$1" != "" ]; then
+    COLOR "<bblue>$1</bblue>"
+    COLOR "<bred>SYNTAX</bred>"
+    php -l $1
+    COLOR "<bred>MESS</bred>"
+    phpmd $1 text /home/kerberos/Data/phpstorm/cleancode/cleancode.xml
+    COLOR "<bred>SNIFFER</bred>"
+    phpcs $1 --standard=PSR2 --encoding=utf-8 --report=full
+else
+    files=$(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)
+    echo "$files" | while read file
+    do
+       if [ ${file: -4} == ".php" ]; then
+          COLOR "<bblue>$file</bblue>"
+          COLOR "<bred>SYNTAX</bred>"
+          php -l $file
+          COLOR "<bred>MESS</bred>"
+          phpmd $file text /home/kerberos/Data/phpstorm/cleancode/cleancode.xml
+          COLOR "<bred>SNIFFER</bred>"
+          phpcs $file --standard=PSR2 --encoding=utf-8 --report=full
+       fi
+    done
+fi
