@@ -5,7 +5,9 @@
 repo=$(basename `git rev-parse --show-toplevel`)
 branch=$(git symbolic-ref --short HEAD)
 
-if [ "$1" = "force" ]; then
+if [ "$branch" = "master" ] || [ "$branch" = "develop" ]; then
+    COLOR "<bred>WARNING: branch is set to $branch</bred>"
+elif [ "$1" = "force" ]; then
     echo push to master
     cmd="git push --force origin $branch"
     echo $cmd && eval $cmd
