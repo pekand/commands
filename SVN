@@ -1,0 +1,33 @@
+#!/bin/bash
+for var in "$@"
+do
+    if [ "$var" = "-x" ]; then
+        set -x
+    fi
+done
+
+if [ "$1" = "commit" ]; then
+    echo -e "\e[31m Svn commit  \e[0m"
+
+    DATE=`date +%Y-%m-%d`
+    svn add --force .
+    svn commit -m "$DATE $1"
+fi
+
+if [ "$1" = "update" ]; then
+    echo -e "\e[31m Svn update  \e[0m"
+
+    svn update
+fi
+
+if [ "$1" = "status" ]; then
+    echo -e "\e[31m Svn update  \e[0m"
+
+    svn status
+fi
+
+if [ "$1" = "" ]; then
+    echo "svn commit"
+    echo "svn update"
+    echo "svn status"
+fi
