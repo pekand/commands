@@ -22,8 +22,8 @@ else:
             if os.path.isdir(matchObj.group(1)):
                 os.system('nohup dolphin "'+arg+'" >/dev/null 2>&1 &')
             else:
-                if not os.path.isfile(matchObj.group(1)):
-                    touch(matchObj.group(1))
+                #if not os.path.isfile(matchObj.group(1)):
+                    #touch(matchObj.group(1))
 
                 if os.path.isfile(matchObj.group(1)):
                     os.system('pstorm "'+arg+'"')

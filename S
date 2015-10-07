@@ -2,5 +2,10 @@
 repo=$(basename `git rev-parse --show-toplevel`)
 branch=$(git symbolic-ref --short HEAD)
 
-COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
-git status
+if [ "$1" = "open" ]; then
+    files=$(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)
+    subl $files
+else
+    COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
+    git status
+fi

@@ -104,7 +104,7 @@ if [ "$1" = "bckg" ]; then
         echo "$hash"
 
         mkdir ~/Desktop/`date +"%Y-%m-%d"`
-        
+
         if [ "$passwordHash" = "$hash" ]; then
             7z a -l -p$mypassword -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
         else
@@ -169,8 +169,12 @@ elif [ "$1" = "git" ]; then
         git log --stat | isubl
 
     elif [ "$2" = "config" ]; then
-        git config --list
+        git config --list    
 
+    elif [ "$2" = "graph" ]; then
+
+        #git log --graph --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(bold yellow)%d%C(reset)' --all
+        git log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(bold yellow)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)' --all
 
     elif [ "$2" = "new" ] && [ "$3" = "files" ] && [ "$4" = "" ]; then
         branch=$(git symbolic-ref --short HEAD)
@@ -210,6 +214,12 @@ elif [ "$1" = "git" ]; then
         git fetch origin
         git reset --hard origin/develop
 
+    elif [ "$2" = "revert" ] && [ "$3" != "" ]; then
+        RED "Git revert $3 commits"
+        branch=$(git symbolic-ref --short HEAD)
+        cmd="git revert $branch~$3..$branch"
+        YELLOW "$cmd" && eval $cmd
+
     elif [ "$2" = "reset" ] && [ "$3" = "merge" ]; then
         RED "Reset merge and cancel changes"
         git reset --hard HEAD
@@ -246,6 +256,7 @@ elif [ "$1" = "git" ]; then
         echo "  reset commit               >> reset commit"
         echo "  reset develop              >> reset from upstream to local upstream"
         echo "  reset merge                >> reset merge and discard chengies"
+        echo "  revert {num}               >> revert last {num} commits"
         echo "  branch delete {name}       >> delete branch"
         echo "  branch new {name}          >> create branch"
         echo "  branch get {name}          >> get branch from origin"
@@ -540,6 +551,12 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         mysql -uroot -proot -e "
         Drop database $3;"
 
+    elif [ "$2" = "purge" ]; then
+        RED "Database $3 drop and create"
+        $self db export compress $3
+        $self db drop $3
+        $self db create $3
+
     elif [ "$2" = "reset" ]; then
         RED "Database reset $3"
         mysql -uroot -proot -e "Drop database $3;"
@@ -587,6 +604,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  import compressed {file.sql.gz} >>  import file to db"
         echo "  query {db} {query}         >> "
         echo "  drop {dbname}              >> drop database"
+        echo "  purge {dbname}             >> backup drop and create database"
         echo "  reset {dbname}             >> drop database and create"
         echo "  user create {db} {username}>> create user {username} in {db}"
         echo "  query {query}              >> "
@@ -1200,6 +1218,11 @@ elif [ "$1" = "file" ]; then
         echo "last changed > display files ordered by "
     fi
 
+elif [ "$1" = "hash" ]; then
+        read -s -p "Enter string: " mypassword
+        hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
+        echo "$hash"
+
 else
 
     if [ "$2" != "" ]; then
@@ -1239,5 +1262,6 @@ else
         echo "svn                          >> commands"
         echo "port                         >> "
         echo "file                         >> "
+        echo "hash                         >> create sha256 hash"
     fi
 fi

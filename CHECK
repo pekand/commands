@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# check changed php files
+
+if [ "$1" != "" ]; then
+    COLOR "<bblue>$1</bblue>"
+    COLOR "<bred>SYNTAX</bred>"
+    php -l $1
+    COLOR "<bred>MESS</bred>"
+    phpmd $1 text /home/kerberos/Data/phpstorm/cleancode/cleancode.xml
+    COLOR "<bred>SNIFFER</bred>"
+    phpcs $1 --standard=PSR2 --encoding=utf-8 --report=full
+else
+    files=$(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)
+    echo "$files" | while read file
+    do
+       if [ ${file: -4} == ".php" ]; then
+          COLOR "<bblue>$file</bblue>"
+          COLOR "<bred>SYNTAX</bred>"
+          php -l $file
+          COLOR "<bred>MESS</bred>"
+          phpmd $file text /home/kerberos/Data/phpstorm/cleancode/cleancode.xml
+          COLOR "<bred>SNIFFER</bred>"
+          phpcs $file --standard=PSR2 --encoding=utf-8 --report=full
+       fi
+    done
+fi
