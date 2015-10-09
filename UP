@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# go to current repositary home folder
-REPO_HOME=$(git rev-parse --show-toplevel)
-cd $REPO_HOME
