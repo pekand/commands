@@ -13,7 +13,7 @@ if [[ "$br" =~ $re ]] ; then
 fi
 
 if [ "$br" = "list" ]; then
-    echo "-switch to local branch"
+    echo "list branches"
     cmd="git branch -ar;git branch"
     echo $cmd && eval $cmd
 elif [ "$br" = "find" ] && [ "$2" != "" ]; then
@@ -24,17 +24,17 @@ elif [ "$br" != "" ]; then
 
     exist=`git branch --list $br`
     if [ "$exist" != "" ]; then
-        echo "-switch to local branch"
+        COLOR "-<purple>switch</purple> to local branch <purple>$br</purple>"
         cmd="git checkout $br"
         echo $cmd && eval $cmd
     else
         exist=`git branch -ar --list origin/$br`
         if [ "$exist" != "" ]; then
-            echo "-copy branch from remote server"
+            COLOR "-<purple>copy</purple> branch <purple>origin/$br</purple> from remote server"
             cmd="git checkout -b $br origin/$br"
             echo $cmd && eval $cmd
         else
-            echo "-create nerw local branch"
+            COLOR "-<purple>create</purple> nerw local branch <purple>$br</purple>"
             cmd="git checkout -b $br $branch"
             echo $cmd && eval $cmd
         fi
