@@ -1,0 +1,19 @@
+#!/bin/bash
+
+# send all changes to current branch
+
+repo=$(basename `git rev-parse --show-toplevel`)
+branch=$(git symbolic-ref --short HEAD)
+
+if [ "$branch" = "master" ] && [ "$2" = "" ]; then
+    COLOR "<bred>WARNING: branch is set to $branch</bred>"
+
+elif [ "$branch" = "develop" ] && [ "$2" = "" ]; then
+    COLOR "<bred>WARNING: branch is set to $branch</bred>"
+
+elif [ "$1" != "" ] ; then
+    A all && M "$1" && PUSH $2
+else
+    COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
+    echo "SEND {message} [branch]"
+fi
