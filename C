@@ -19,7 +19,12 @@ if [ "$1" = "bckg" ]; then
         read -s -p "Enter Password: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
-        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+
+        $DIRECTORY=~/Desktop/`date +"%Y-%m-%d"`
+        if [ ! -d "$DIRECTORY" ]; then
+          mkdir $DIRECTORY
+        fi
+
         if [ "$passwordHash" = "$hash" ]; then
             7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/ > /dev/null && echo "DONE"  &
             7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/ > /dev/null && echo "DONE" &
@@ -32,29 +37,13 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
-        rm -Rf /var/www/src/ats/app/cache/dev/*
-        rm -Rf /var/www/src/ats/app/cache/prod/*
-        rm -Rf /var/www/src/ats/app/logs/*
-
-        rm -Rf /var/www/src/clean/app/cache/dev/*
-        rm -Rf /var/www/src/clean/app/cache/prod/*
-        rm -Rf /var/www/src/clean/app/logs/*
-
-        rm -Rf /var/www/src/everBox/app/cache/dev/*
-        rm -Rf /var/www/src/everBox/app/cache/prod/*
-        rm -Rf /var/www/src/everBox/app/logs/*
-
-        rm -Rf /var/www/src/lucid-backend/app/cache/dev/*
-        rm -Rf /var/www/src/lucid-backend/app/cache/prod/*
-        rm -Rf /var/www/src/lucid-backend/app/logs/*
-
-        rm -Rf /var/www/src/mantaapi/app/cache/dev/*
-        rm -Rf /var/www/src/mantaapi/app/cache/prod/*
-        rm -Rf /var/www/src/mantaapi/app/logs/*
-
-        rm -Rf /var/www/src/spaceSpy/app/cache/dev/*
-        rm -Rf /var/www/src/spaceSpy/app/cache/prod/*
-        rm -Rf /var/www/src/spaceSpy/app/logs/*
+        projectsArray=(ats clean everBox lucid-backend mantaapi spaceSpy)
+        for i in "${!projectsArray[@]}"; do
+                item=${projectsArray[$i]}
+                rm -Rf /var/www/src/$item/app/cache/dev/*
+                rm -Rf /var/www/src/$item/app/cache/prod/*
+                rm -Rf /var/www/src/$item/app/logs/*
+        done
 
         mkdir ~/Desktop/`date +"%Y-%m-%d"`
 
@@ -70,7 +59,10 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
-        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+        $DIRECTORY=~/Desktop/`date +"%Y-%m-%d"`
+        if [ ! -d "$DIRECTORY" ]; then
+          mkdir $DIRECTORY
+        fi
 
         if [ "$passwordHash" = "$hash" ]; then
 
@@ -91,7 +83,11 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
-        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+        $DIRECTORY=~/Desktop/`date +"%Y-%m-%d"`
+        if [ ! -d "$DIRECTORY" ]; then
+          mkdir $DIRECTORY
+        fi
+
         if [ "$passwordHash" = "$hash" ]; then
             C search snapshot create snapshot_1
             7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/elastic-`date +"%Y-%m-%d-%H-%M-%S"`.7z /tmp/my_backup/
@@ -103,7 +99,10 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
-        mkdir ~/Desktop/`date +"%Y-%m-%d"`
+        $DIRECTORY=~/Desktop/`date +"%Y-%m-%d"`
+        if [ ! -d "$DIRECTORY" ]; then
+          mkdir $DIRECTORY
+        fi
 
         if [ "$passwordHash" = "$hash" ]; then
             7z a -l -p$mypassword -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
@@ -169,7 +168,7 @@ elif [ "$1" = "git" ]; then
         git log --stat | isubl
 
     elif [ "$2" = "config" ]; then
-        git config --list    
+        git config --list
 
     elif [ "$2" = "graph" ]; then
 
