@@ -14,7 +14,7 @@ alias HOME="cd ~"
 alias DESKTOP="cd ~/Desktop"
 alias EVERLUTION="cd ~/Desktop/Everlution"
 alias EVER="cd ~/Desktop/Everlution"
-alias PALLETE="cd ~/Desktop/Everlution/pallete"
+alias DIAGRAMS="cd ~/Desktop/Everlution/Diagrams"
 alias SCRIPTS="cd ~/Desktop/Everlution/script"
 alias BCKG="cd ~/Desktop/Bckg/"
 alias MAIL="cd /var/log/mail"
@@ -33,6 +33,7 @@ alias MANTASTATIC="cd /var/www/src/manta-static"
 alias MANTABANK="cd /var/www/src/bank-service"
 alias SPACESPY="cd /var/www/src/spaceSpy"
 alias ATS="cd /var/www/src/ats"
+alias ENROLA="cd /var/www/src/ats"
 alias SLIPCASE="cd /var/www/src/feed"
 alias FEED="cd /var/www/src/feed"
 alias CLEAN="cd /var/www/src/clean"
@@ -58,7 +59,7 @@ function c() {
     fi;
 
     if [ $new_directory_len == 0 ]; then
-      ls -la
+      ls -lah
     else
       if [ $new_directory_len == $new_directory_cnt ]; then
         for (( c=1; c<=$new_directory_cnt; c++ ))
@@ -66,16 +67,6 @@ function c() {
            cd ..
         done
         ls
-      elif [ "$1" = "test" ] && [ ! -d "test" ]; then
-        cd /var/www/src/test
-      elif [ "$1" = "ngtu" ] && [ ! -d "ngtu" ]; then
-        cd /var/www/src/NGTU2
-      elif [ "$1" = "manta" ] && [ ! -d "ngtu" ]; then
-        cd /var/www/src/manta
-      elif [ "$1" = "script" ] && [ ! -d "script" ]; then
-        cd ~/script
-      elif [ "$1" = "dbadmin" ] && [ ! -d "script" ]; then
-        cd /var/www/dbadmin/
       else
         builtin cd "${new_directory}" && ls
       fi
