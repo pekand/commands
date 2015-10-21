@@ -584,6 +584,13 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         RED "Open log"
         sudo subl /var/log/mysql/mysql.log
 
+    elif [ "$2" = "copy" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
+        RED "Copy database $3 to $4"
+        mysqldump -h localhost -u root -proot "$3" > /tmp/dump-$3.sql
+        C db create "$4"
+        mysql -h localhost -u root -proot "$4" < /tmp/dump-"$3".sql
+        rm /tmp/dump-$3.sql
+
     else
         echo "database|db                  >> "
         echo "  list                       >> "
@@ -610,6 +617,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  create {dbname}            >> create database"
         echo "  log {on|off}               >> Turn on log"
         echo "  log edit                   >> Open log"
+        echo "  copy {oldDB} {newDB}       >> Open log"
     fi
 
 elif [ "$1" = "sql" ]; then
