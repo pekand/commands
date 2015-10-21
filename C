@@ -586,10 +586,11 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
 
     elif [ "$2" = "copy" ] && [ "$3" != "" ] && [ "$4" != "" ]; then
         RED "Copy database $3 to $4"
-        mysqldump -h localhost -u root -proot "$3" > /tmp/dump-$3.sql
+        mysqldump -h localhost -u root -proot --databases "$3" > /tmp/dump-$3.sql
         C db create "$4"
-        mysql -h localhost -u root -proot "$4" < /tmp/dump-"$3".sql
+        mysql -h localhost -u root -proot "$4" < /tmp/dump-$3.sql
         rm /tmp/dump-$3.sql
+
 
     else
         echo "database|db                  >> "
