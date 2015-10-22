@@ -244,6 +244,10 @@ elif [ "$1" = "git" ]; then
         RED "Git ignore file permissions"
         git config core.fileMode false
 
+    elif [ "$2" = "delete" ] && [ "$3" != "" ]; then
+        RED "Git remove file $3 from cache"
+        git rm --cached $3
+
     else
         echo "git                          >> git commands"
         echo "  log                        >> show commits log"
@@ -260,6 +264,8 @@ elif [ "$1" = "git" ]; then
         echo "  branch new {name}          >> create branch"
         echo "  branch get {name}          >> get branch from origin"
         echo "  diff {branch=develop}      >> compare current branch with {branch} or develop"
+        echo "  permissions ignore         >> ignore changed premmision by git"
+        echo "  delete {file}              >> remove file from cache"
     fi
 elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "rights" ] || [ "$1" = "permission" ] || [ "$1" = "permissions" ]; then
 
