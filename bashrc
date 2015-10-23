@@ -12,6 +12,7 @@ trap 'printf "\e[0m" "$_"' DEBUG
 
 alias HOME="cd ~"
 alias DESKTOP="cd ~/Desktop"
+alias DOWNLOADS="cd ~/Downloads"
 alias EVERLUTION="cd ~/Desktop/Everlution"
 alias EVER="cd ~/Desktop/Everlution"
 alias DIAGRAMS="cd ~/Desktop/Everlution/Diagrams"

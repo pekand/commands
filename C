@@ -26,9 +26,9 @@ if [ "$1" = "bckg" ]; then
         fi
 
         if [ "$passwordHash" = "$hash" ]; then
-            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/ > /dev/null && echo "DONE bckg"
-            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/ > /dev/null && echo "DONE everlution"
-            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/data-`date +"%Y-%m-%d-%H-%M-%S"`.7z /home/kerberos/Desktop/Data/ > /dev/null && echo "DONE data"
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/
+            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/data-`date +"%Y-%m-%d-%H-%M-%S"`.7z /home/kerberos/Desktop/Data/
         else
             echo "wrong password"
         fi
