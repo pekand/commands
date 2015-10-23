@@ -1,47 +1,4 @@
 #!/bin/bash
 
-# switch or create branch shortcut
+# run unit tests
 
-repo=$(basename `git rev-parse --show-toplevel`)
-branch=$(git symbolic-ref --short HEAD)
-
-br=$1
-re='^[0-9]+$'
-if [[ "$br" =~ $re ]] ; then
-   br=feature-$br
-   echo "rename to $br"
-fi
-
-if [ "$br" = "list" ]; then
-    echo "list branches"
-    cmd="git branch -ar;git branch"
-    echo $cmd && eval $cmd
-elif [ "$br" = "find" ] && [ "$2" != "" ]; then
-    B list | grep $2
-elif [ "$br" != "" ]; then
-    echo "git fetch --all"
-    git fetch --all
-
-    exist=`git branch --list $br`
-    if [ "$exist" != "" ]; then
-        COLOR "-<purple>switch</purple> to local branch <purple>$br</purple>"
-        cmd="git checkout $br"
-        echo $cmd && eval $cmd
-    else
-        exist=`git branch -ar --list origin/$br`
-        if [ "$exist" != "" ]; then
-            COLOR "-<purple>copy</purple> branch <purple>origin/$br</purple> from remote server"
-            cmd="git checkout -b $br origin/$br"
-            echo $cmd && eval $cmd
-        else
-            COLOR "-<purple>create</purple> nerw local branch <purple>$br</purple>"
-            cmd="git checkout -b $br $branch"
-            echo $cmd && eval $cmd
-        fi
-    fi
-else
-    COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
-    echo "list     >> list all"
-    echo "{num}    >> create new or switch to 'feature-{num}'"
-    echo "{name}   >> create new or switch"
-fi
