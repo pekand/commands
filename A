@@ -2,12 +2,15 @@
 
 # git add shortcut
 
-if [ "$1" = "all" ]; then
+if [ "$1" != "" ] && [ -f $@ ]; then
+    git add $@
+elif [ "$1" = "all" ]; then
     git add --all
+elif [ "$1" = "force" ] && [ "$2" != "" ]; then
+    branch=$(git symbolic-ref --short HEAD)
+    A all && M "$2" && PUSH $branch
 elif [ "$1" = "reset" ]; then
     git reset HEAD
-elif [ "$1" != "" ]; then
-    git add $@
 else
     echo "a {file}"
     echo "a all"
