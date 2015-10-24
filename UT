@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# run unit tests
+
+#repo=$(basename `git rev-parse --show-toplevel`)
+#branch=$(git symbolic-ref --short HEAD)
+#cd /var/www/src/@repo
+#phpunit -c app/ 
+
+if [ "$1" = "list" ]; then
+    for d in $(find . -type d) ; do
+        dirname=$(basename $d)
+        if [ "$dirname" = "Tests" ]; then
+           for f in $(find $d -type f) ; do
+                filename=$(basename $d)
+                echo "filename"
+            done
+        fi
+    done
+else
+    COLOR "Unit tests"
+    echo "list     >> list all tests in current directory"
+fi
+
