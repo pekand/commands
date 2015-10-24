@@ -12,6 +12,7 @@ trap 'printf "\e[0m" "$_"' DEBUG
 
 alias HOME="cd ~"
 alias DESKTOP="cd ~/Desktop"
+alias DOWNLOADS="cd ~/Downloads"
 alias EVERLUTION="cd ~/Desktop/Everlution"
 alias EVER="cd ~/Desktop/Everlution"
 alias DIAGRAMS="cd ~/Desktop/Everlution/Diagrams"
@@ -48,6 +49,8 @@ alias SMOOF="cd /var/www/src/smoof"
 alias VERTEX="cd /var/www/src/vertex"
 alias VAPE="cd /var/www/src/vape"
 
+. DO --load
+
 function c() {
     new_directory="$*";
     new_directory_len=${#new_directory}
@@ -76,10 +79,6 @@ function c() {
 function UP() {
     REPO_HOME=$(git rev-parse --show-toplevel)
     builtin cd "${REPO_HOME}"
-}
-
-function LAST() {
-    fc -ln "$1" "$1" | sed '1s/^[[:space:]]*//'
 }
 
 directory=/home/kerberos/history/

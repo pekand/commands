@@ -1,0 +1,86 @@
+#!/usr/bin/php5
+<?php
+
+#var_dump($argv);
+$params = $argv;
+array_shift($params);
+#$params = trim(implode(" ", $params));
+
+#echo  $params;
+
+$file = realpath(dirname(__FILE__))."/database.db";
+
+$data = array();
+
+$initDatabase = false;
+if (!file_exists($file)) {
+    $initDatabase = true;
+}
+
+// Open database
+$db = new SQLite3($file);
+$db->enableExceptions(true);
+
+
+// DB --init
+if ($initDatabase || in_array("--init", $params)) {
+    echo "Create tables\n";
+    $db->exec('     
+    ');
+}
+
+// DB exec {query}
+if (!empty($params[0]) && $params[0]=="exec" && !empty($params[1])) {
+    $query = $params[1];
+    
+    try {
+        $db->exec($query);
+    }
+    catch (Exception $exception) {
+        echo "ERROR: ".$exception->getMessage();die();
+    }
+}
+
+// DB query {query}
+if (!empty($params[0]) && $params[0]=="query" && !empty($params[1])) {
+    $query = $params[1];
+    $data = array();
+    try {
+        $results = $db->query($query);
+        while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+            $data[] = $row;
+        }
+    }
+    catch (Exception $exception) {
+        echo "ERROR: ".$exception->getMessage();die();
+    }
+    
+    if (in_array("--single", $params)) { //return first element as string
+        if (!empty($data) && is_array($data)) {
+            $data = array_shift($data);
+        }
+
+        if (!empty($data) && is_array($data)) {
+            $data = array_shift($data);
+        }
+
+        if (!empty($data)) {
+            echo $data;
+        }
+        
+    } else {
+        echo json_encode($data, JSON_PRETTY_PRINT); // return all as json
+    }
+}
+
+$db->close();
+
+// DB --help
+if (in_array("--help", $params)) {
+    echo "
+--init >> create tables
+query {query} >> execute query
+exec {query} >> execute query without output
+";
+}
+
