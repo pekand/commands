@@ -5,7 +5,14 @@ color="\e[1;33m"
 text=$@
 
 function string_replace {
-    echo "$1" | sed -r 's:'"$2"':'"$3"':g'
+    string='My string';
+
+    if [[ $1 =~ .*$2.* ]]
+    then
+      echo "$1" | sed -r 's:'"$2"':'"$3"':g'
+    else
+      echo "$1"
+    fi
 }
 
 collorsArray=(black red green yellow blue purple cyan white)
