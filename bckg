@@ -4,7 +4,10 @@
 
 DIRNAME=${PWD##*/} #name of current directory
 ADDITIONAL="$@"
-directory=~/Desktop/Bckg/
+directory=~/Bckg/
+if [ ! -d $directory ]; then
+  mkdir $directory
+fi
 directory=${directory}$(date +'%Y')/
 if [[ ! -d $directory ]]; then
   mkdir $directory

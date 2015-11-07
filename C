@@ -15,7 +15,7 @@ else
 fi
 
 if [ "$1" = "bckg" ]; then
-    if [ "$2" = "everlution" ]; then
+    if [ "$2" = "pc" ]; then
         read -s -p "Enter Password: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
@@ -27,7 +27,6 @@ if [ "$1" = "bckg" ]; then
 
         if [ "$passwordHash" = "$hash" ]; then
             7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/bckg-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Bckg/
-            7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/everlution-`date +"%Y-%m-%d-%H-%M-%S"`.7z ~/Desktop/Everlution/
             7z a -l -p"$mypassword" -mhe ~/Desktop/`date +"%Y-%m-%d"`/data-`date +"%Y-%m-%d-%H-%M-%S"`.7z /home/kerberos/Desktop/Data/
         else
             echo "wrong password"
@@ -37,7 +36,7 @@ if [ "$1" = "bckg" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
-        projectsArray=(ats clean everBox lucid-backend mantaapi spaceSpy)
+        projectsArray=(symfonyProjectDir)
         for i in "${!projectsArray[@]}"; do
                 item=${projectsArray[$i]}
                 rm -Rf /var/www/src/$item/app/cache/dev/*
@@ -115,8 +114,8 @@ if [ "$1" = "bckg" ]; then
         7z a -l -p$PWD -mhe ~/Desktop/enc-$DIRNAME-`date +"%Y-%m-%d-%H-%M-%S"`-$PWD.7z "$3"
     else
         echo "bckg                         >> run bckg"
-        echo "  everlution                 >> backup everlution directory"
-        echo "  bckg                       >> brackup bckg"
+        echo "  pc                         >> backup pc"
+        echo "  bckg                       >> backup bckg"
         echo "  encrypt {dir}              >> encrypt dyrectory"
     fi
 
@@ -320,11 +319,9 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
 
     if [ "$2" = "update" ]; then
         RED "Update"
-        app/console everlution:search:reindex
 
     elif [ "$2" = "reindex" ] && [ "$3" != "" ]; then
         RED "Reindex $3"
-        Z everlution:search:reindex 'AppBundle\Provider\Search\$3' --force --no-interaction
 
     elif [ "$2" = "reindex" ]; then
         RED "reindex elastic"
@@ -375,11 +372,9 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
 
     elif [ "$2" = "reset" ]; then
         RED "Resrt elasticsearch indices for current project"
-        Z everlution:search:indices:create --force
 
     elif [ "$2" = "create" ]; then
         RED "Elasticsearch indices create"
-        Z everlution:search:indices:create --force
 
     elif [ "$2" = "snapshot" ] && [ "$3" = "list" ]; then
         curl -XGET 'localhost:9200/_snapshot/my_backup/_all'
@@ -768,23 +763,19 @@ elif [ "$1" = "restart" ]; then
 elif [ "$1" = "edit" ]; then
 
     if [ "$2" = "script" ]; then
-        E ~/Everlution/script
+        E ~/commands/
     elif [ "$2" = "hosts" ] || [ "$2" = "host" ]; then
         sudo vim /etc/hosts
     elif [ "$2" = "apache" ]; then
         sudo thunar "/etc/apache2/"
     elif [ "$2" = "php" ]; then
         sudo thunar "/etc/php5/"
-    elif [ "$2" = "grep" ]; then
-        E /home/kerberos/Desktop/Everlution/Server/grep/grep.php
-    elif [ "$2" = "scan" ]; then
-        E /home/kerberos/Desktop/Everlution/Server/grep/scan.php
     elif [ "$2" = "self" ] || [ "$2" = "" ]; then
-        subl ~/Desktop/Everlution/script/$self
+        subl ~/commands/$self
     elif [ "$2" = "bashrc" ]; then
         E ~/.bashrc
     elif [ "$2" != "" ]; then
-        E ~/Desktop/Everlution/script/$2
+        E ~/commands/$2
     fi
 
     if [ "$2" = "" ]; then
