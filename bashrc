@@ -18,7 +18,7 @@ alias BCKG="cd ~/Bckg/"
 alias MAIL="cd /var/log/mail"
 alias ETC="cd /etc"
 
-alias WWW="cd /var/www/src/"
+alias WWW="cd /var/www/"
 alias HTTP="cd /var/www/http/"
 
 alias SRC="cd /var/www/src/"
