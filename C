@@ -1,4 +1,12 @@
 #!/bin/bash
+
+OS=$(uname -s)
+ARCH=$(uname -m)
+VER=$(uname -r)
+
+serverUser="apache" 
+distro="centos" 
+
 for var in "$@"
 do
     if [ "$var" = "-x" ]; then
@@ -144,7 +152,7 @@ elif [ "$1" = "project" ]; then
                 echo  "hosts alresady updated"
             else
                 sudo bash -c "echo $HOSTSLINE >> /etc/hosts"
-                sudo vim /etc/hosts
+                sudo subl /etc/hosts
             fi
         else
             echo "apache configuration file already exist"
@@ -271,7 +279,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
     if [ "$2" = "owner" ] && [ "$3" != "" ]; then
         RED "Set owner"
         #nastavy prava pre web apache adresar
-        sudo chown www-data:www-data -R $3
+        sudo chown $serverUser:$serverUser -R $3
 
     elif [ "$2" = "symfony" ]; then
         RED "Set premission"
@@ -299,7 +307,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
     elif [ "$2" = "default" ] && [ "$3" != "" ]; then
         RED "Set server premission"
         #nastavy adresar
-        sudo chown -R www-data:www-data "$3"
+        sudo chown -R $serverUser:$serverUser "$3"
         sudo find "$3" -type d -exec chmod 775 {} \;
         sudo find "$3" -type f -exec chmod 664 {} \;
     elif [ "$2" = "ignore" ]; then
@@ -308,7 +316,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
 
     else
         echo "rights|permissions           >> "
-        echo "  owner {dir}                >> www-data"
+        echo "  owner {dir}                >> $serverUser"
         echo "  symfony {dir}              >> premission in symfony folder"
         echo "  filebundle {dir}           >> premission in symfony folder width filebundle"
         echo "  default {dir}              >> premission for server directory"
@@ -654,13 +662,25 @@ elif [ "$1" = "dns" ]; then
 
 elif [ "$1" = "server" ]; then
 
-    if [ "$2" = "restart" ]; then
-        RED "Elastic, mysql, redis and apache restart"
-        sudo /bin/systemctl restart elasticsearch.service
-        sudo /bin/systemctl restart mysql.service
-        sudo /bin/systemctl restart redis-server.service
-        sudo /bin/systemctl restart apache2.service
-        echo "DONE"
+    if [ "$2" = "restart" ]; then        	
+
+        if [ "distro" = "ubuntu"  ]; then
+            RED "Elastic, mysql, redis and apache restart"
+            sudo service elasticsearch restart
+            sudo service mysql restart
+            sudo service redis-server restart
+            sudo service apache2 restart
+            
+            echo "DONE"
+        fi
+
+        if [ "distro" = "centos"  ]; then
+            #restart cntlm
+        	sudo service restart cntlmd
+            #restart apache
+			sudo service httpd restart
+		    echo "DONE"
+	    fi
 
     elif [ "$2" = "kill" ]; then
         RED "Elastic, mysql, redis and apache restart"
@@ -764,16 +784,25 @@ elif [ "$1" = "edit" ]; then
 
     if [ "$2" = "script" ]; then
         E ~/commands/
+        
     elif [ "$2" = "hosts" ] || [ "$2" = "host" ]; then
-        sudo vim /etc/hosts
+        sudo subl /etc/hosts
+	
+	elif [ "$2" = "proxy" ]; then
+        sudo subl /etc/cntlm.conf
+
     elif [ "$2" = "apache" ]; then
-        sudo thunar "/etc/apache2/"
+        sudo thunar "/etc/httpd/conf/httpd.conf"
+
     elif [ "$2" = "php" ]; then
         sudo thunar "/etc/php5/"
+
     elif [ "$2" = "self" ] || [ "$2" = "" ]; then
         subl ~/commands/$self
+
     elif [ "$2" = "bashrc" ]; then
         E ~/.bashrc
+
     elif [ "$2" != "" ]; then
         E ~/commands/$2
     fi
@@ -1227,6 +1256,9 @@ elif [ "$1" = "hash" ]; then
         read -s -p "Enter string: " mypassword
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
+
+elif [ "$1" = "view" ] && [ "$2" = "apache" ] && [ "$3" = "log" ]; then
+        sudo subl /var/log/httpd/error_log
 
 else
 
