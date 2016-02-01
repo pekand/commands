@@ -1,0 +1,21 @@
+#!/bin/bash
+
+#diff -x '*.foo' -x '*.bar' -x '*.baz' /destination/dir/1 /destination/dir/2
+#diff -r --exclude="*~"
+
+if [ "$1" = "" ]; then
+    VAR=$(realpath ./)
+else
+	VAR=$(realpath $1)
+fi
+
+DIR=$(dirname "${VAR}")
+BA=$(basename $VAR)
+INC="-x '*.php'"
+	
+if [ ! -f "$DIR/$BA-original" ]; then
+    echo "Not exist $DIR/$BA-original"
+    exit
+fi
+
+diff -r $INC $DIR/$BA $DIR/$BA-original | more
