@@ -1257,8 +1257,15 @@ elif [ "$1" = "hash" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
+
 elif [ "$1" = "view" ] && [ "$2" = "apache" ] && [ "$3" = "log" ]; then
         sudo subl /var/log/httpd/error_log
+
+elif [ "$1" = "link" ]; then
+    
+    if [ "$2" != "" ] && [ "$3" != "" ]; then
+        ln -s /var/www/http/$2 $3
+    fi
 
 else
 
