@@ -4,8 +4,14 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 VER=$(uname -r)
 
-serverUser="apache" 
-distro="centos" 
+BASEDIR=$(dirname $0)
+
+if [ -f $BASEDIR/config.cfg ];
+then
+. $BASEDIR/config.cfg
+else
+. $BASEDIR/config.default.cfg
+fi
 
 for var in "$@"
 do
