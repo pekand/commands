@@ -670,17 +670,14 @@ elif [ "$1" = "server" ]; then
 
     if [ "$2" = "restart" ]; then        	
 
-        if [ "distro" = "ubuntu"  ]; then
-            RED "Elastic, mysql, redis and apache restart"
-            sudo service elasticsearch restart
+        if [ "$distro" = "ubuntu"  ]; then
+            RED "mysql and apache restart"
             sudo service mysql restart
-            sudo service redis-server restart
             sudo service apache2 restart
-            
             echo "DONE"
         fi
 
-        if [ "distro" = "centos"  ]; then
+        if [ "$distro" = "centos"  ]; then
             #restart cntlm
         	sudo service restart cntlmd
             #restart apache
@@ -689,10 +686,8 @@ elif [ "$1" = "server" ]; then
 	    fi
 
     elif [ "$2" = "kill" ]; then
-        RED "Elastic, mysql, redis and apache restart"
-        sudo /bin/systemctl stop elasticsearch.service
+        RED "mysql and apache kill"
         sudo /bin/systemctl stop mysql.service
-        sudo /bin/systemctl stop redis-server.service
         sudo /bin/systemctl stop apache2.service
         echo "DONE"
 
