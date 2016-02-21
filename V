@@ -1,2 +1,30 @@
-#!/bin/bash
-vim "$@"
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+# open file or directory sublime text shortcut
+
+import sys
+import os
+import re
+import fileinput
+
+def touch(path):
+    with open(path, 'a'):
+        os.utime(path, None)
+
+if len(sys.argv)<=1:
+    os.system('nohup dolphin . >/dev/null 2>&1 &')
+else:
+    sys.argv.pop(0)
+    for arg in sys.argv:
+        matchObj = re.match( r'^([^:]*)(:[0-9]+){0,1}$', arg, re.M|re.I)
+        if matchObj:
+            if os.path.isdir(matchObj.group(1)):
+                os.system('nohup dolphin "'+arg+'" >/dev/null 2>&1 &')
+            else:
+                #if not os.path.isfile(matchObj.group(1)):
+                    #touch(matchObj.group(1))
+
+                if os.path.isfile(matchObj.group(1)):
+                    os.system('vim "'+arg+'"')
+exit(0);

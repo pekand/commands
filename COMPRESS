@@ -1,5 +1,0 @@
-#!/bin/bash
-
-# compress files
-
-tar -cvzf archive-`date +"%Y-%m-%d-%H-%M-%S"`.tar.gz $@ 
