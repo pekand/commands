@@ -4,8 +4,14 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 VER=$(uname -r)
 
-serverUser="apache" 
-distro="centos" 
+BASEDIR=$(dirname $0)
+
+if [ -f $BASEDIR/config.cfg ];
+then
+. $BASEDIR/config.cfg
+else
+. $BASEDIR/config.default.cfg
+fi
 
 for var in "$@"
 do
@@ -664,17 +670,14 @@ elif [ "$1" = "server" ]; then
 
     if [ "$2" = "restart" ]; then        	
 
-        if [ "distro" = "ubuntu"  ]; then
-            RED "Elastic, mysql, redis and apache restart"
-            sudo service elasticsearch restart
+        if [ "$distro" = "ubuntu"  ]; then
+            RED "mysql and apache restart"
             sudo service mysql restart
-            sudo service redis-server restart
             sudo service apache2 restart
-            
             echo "DONE"
         fi
 
-        if [ "distro" = "centos"  ]; then
+        if [ "$distro" = "centos"  ]; then
             #restart cntlm
         	sudo service restart cntlmd
             #restart apache
@@ -683,10 +686,8 @@ elif [ "$1" = "server" ]; then
 	    fi
 
     elif [ "$2" = "kill" ]; then
-        RED "Elastic, mysql, redis and apache restart"
-        sudo /bin/systemctl stop elasticsearch.service
+        RED "mysql and apache kill"
         sudo /bin/systemctl stop mysql.service
-        sudo /bin/systemctl stop redis-server.service
         sudo /bin/systemctl stop apache2.service
         echo "DONE"
 
@@ -1257,8 +1258,15 @@ elif [ "$1" = "hash" ]; then
         hash=`echo -n $mypassword | openssl dgst -sha256 | sed 's/^.* //'`
         echo "$hash"
 
+
 elif [ "$1" = "view" ] && [ "$2" = "apache" ] && [ "$3" = "log" ]; then
         sudo subl /var/log/httpd/error_log
+
+elif [ "$1" = "link" ]; then
+    
+    if [ "$2" != "" ] && [ "$3" != "" ]; then
+        ln -s /var/www/http/$2 $3
+    fi
 
 else
 

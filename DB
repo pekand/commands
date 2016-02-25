@@ -1,4 +1,4 @@
-#!/usr/bin/php5
+#!/usr/bin/php
 <?php
 
 #var_dump($argv);
@@ -76,7 +76,7 @@ if (!empty($params[0]) && $params[0]=="query" && !empty($params[1])) {
 $db->close();
 
 // DB --help
-if (in_array("--help", $params)) {
+if (count($params)==0 || in_array("--help", $params)) {
     echo "
 --init >> create tables
 query {query} >> execute query
