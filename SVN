@@ -6,6 +6,19 @@ do
     fi
 done
 
+
+if [ "$1" = "checkout" ] && [ "$2" != "" ] && [ "$3" != "" ]; then
+    echo -e "\e[31m Svn checkout  \e[0m"
+
+    $user=""
+    if ["$3" != ""]; then
+        $user="$3"
+    fi
+
+    echo "svn checkout  $1 $2 $user"
+    svn checkout $2 $3 $user
+fi
+
 if [ "$1" = "commit" ]; then
     echo -e "\e[31m Svn commit  \e[0m"
 
@@ -33,6 +46,7 @@ if [ "$1" = "log" ]; then
 fi
 
 if [ "$1" = "" ]; then
+    echo "svn checkout {url} {dir} {user}"
     echo "svn commit"
     echo "svn update"
     echo "svn status"
