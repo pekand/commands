@@ -677,11 +677,11 @@ elif [ "$1" = "server" ]; then
             echo "DONE"
         fi
 
-        if [ "$distro" = "centos"  ]; then
-            #restart cntlm
-        	sudo service restart cntlmd
+        if [ "distro" = "centos"  ]; then
+            #restart cntlm        	
+            sudo systemctl restart cntlmd
             #restart apache
-			sudo service httpd restart
+			sudo systemctl restart httpd
 		    echo "DONE"
 	    fi
 
