@@ -13,7 +13,7 @@ trap 'printf "\e[0m" "$_"' DEBUG
 alias HOME="cd ~"
 alias DESKTOP="cd ~/Desktop"
 alias DOWNLOADS="cd ~/Downloads"
-alias SCRIPTS="cd ~/commands"
+alias COMMANDS="cd ~/commands"
 alias BCKG="cd ~/Bckg/"
 alias MAIL="cd /var/log/mail"
 alias ETC="cd /etc"
