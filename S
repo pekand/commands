@@ -3,18 +3,16 @@
 if [ "$1" = "open" ]; then
     files=$(git ls-files --modified; git ls-files --others --exclude-standard; git diff --cached --name-only)
     subl $files
-else
-	isgit=`git rev-parse 2> /dev/null; [ $? == 0 ] && echo 1`
-	issvn=`svn info 2> /dev/null; [ $? == 0 ] && echo 1`	
+else	
 
-	if [ "$isgit" = "1" ]; then
+	if [ `ISGIT` = "1" ]; then
 		repo=$(basename `git rev-parse --show-toplevel`)
 		branch=$(git symbolic-ref --short HEAD)
 	    COLOR "Current branch is <bpurple>$branch</bpurple> in repository <bcyan>$repo</bcyan>"
 	    git status    
     fi
 
-    if [ "$issvn" = 1 ]; then
+    if [ `ISSVN` = "1" ]; then
 	    COLOR "Svn repository <bcyan>$repo</bcyan>"
 	    svn status
     fi

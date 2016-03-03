@@ -1,21 +1,28 @@
 #!/bin/bash
 
 # git diff shortcut
+  
+if [ `ISGIT` = "1" ]; then
+  if [ "$1" = "file" ]; then
+      git diff | isubl
 
-if [ "$1" = "file" ]; then
-    git diff | isubl
+  elif [ "$1" = "new" ]; then
+      IFS=$'\n'
+      for f in `git ls-files --others --exclude-standard --color-words`
+      do
+        echo "---"
+        echo "$f"
+        echo "---"
+        cat "$f"
+      done
+  elif [ "$1" != "" ]; then
+      git diff "$1"
+  else
+      git diff --color-words
+  fi
+fi
 
-elif [ "$1" = "new" ]; then
-    IFS=$'\n'
-    for f in `git ls-files --others --exclude-standard --color-words`
-    do
-      echo "---"
-      echo "$f"
-      echo "---"
-      cat "$f"
-    done
-elif [ "$1" != "" ]; then
-    git diff "$1"
-else
-    git diff --color-words
+
+if [ `ISSVN` = "1" ]; then
+  svn diff | isubl
 fi

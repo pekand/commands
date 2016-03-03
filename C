@@ -310,12 +310,18 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
         sudo setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads/files
         sudo setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads/files
 
-    elif [ "$2" = "default" ] && [ "$3" != "" ]; then
+    elif [ "$2" = "default" ]; then
         RED "Set server premission"
+        
+        if [ "$3" != "" ]; then
+            cd $3
+        fi
+
         #nastavy adresar
-        sudo chown -R $serverUser:$serverUser "$3"
-        sudo find "$3" -type d -exec chmod 775 {} \;
-        sudo find "$3" -type f -exec chmod 664 {} \;
+        sudo chown -R $serverUser:$serverUser .
+        sudo find . -type d -exec chmod 775 {} \;
+        sudo find . -type f -exec chmod 664 {} \;
+
     elif [ "$2" = "ignore" ]; then
         RED "Git ignore premission"
         git config core.fileMode false
