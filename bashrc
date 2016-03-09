@@ -4,11 +4,12 @@
 #    . $HOME/commands/bashrc
 #fi
 
-#PS1="\[\033[01;32m\]\$PWD\[\033[00m\]: \e[1;33m"
-#trap 'printf "\e[0m" "$_"' DEBUG
-
-PS1="\[\e[1;32m\]\$PWD:\[\e[m\]\[\e[1;33m\]"
-trap 'printf "\e[0m" "$_"' DEBUG
+if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+  SESSION_TYPE=remote/ssh
+else
+  PS1="\[\e[1;32m\]\$PWD:\[\e[m\]\[\e[1;33m\]"
+  trap 'printf "\e[0m" "$_"' DEBUG
+fi
 
 alias HOME="cd ~"
 alias DESKTOP="cd ~/Desktop"
