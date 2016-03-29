@@ -676,14 +676,14 @@ elif [ "$1" = "server" ]; then
 
     if [ "$2" = "restart" ]; then        	
 
-        if [ "$distro" = "ubuntu"  ]; then
+        if [ "$distro" = "ubuntu" ]; then
             RED "mysql and apache restart"
             sudo service mysql restart
             sudo service apache2 restart
             echo "DONE"
         fi
 
-        if [ "$distro" = "centos"  ]; then
+        if [ "$distro" = "centos" ]; then
             RED "mysql and apache restart"
             #restart cntlm        	
             sudo systemctl restart cntlmd

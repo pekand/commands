@@ -24,6 +24,42 @@ alias HTTP="cd /var/www/http/"
 
 alias SRC="cd /var/www/src/"
 
+DISTRO="unknown"
+SERVERUSER="www-data"
+if python -mplatform | grep Ubuntu >> /dev/null ; then
+     DISTRO="ubuntu"
+     SERVERUSER="www-data"
+fi
+
+if python -mplatform | grep Centos >> /dev/null ; then
+     DISTRO="centos"
+     SERVERUSER="apache"
+fi
+
+function APACHE {
+	if [ "$DISTRO" = "ubuntu" ] ; then
+		cd /etc/apache2/sites-available/
+	fi
+
+	if [ "$DISTRO" = "centos" ] ; then
+		sudo subl /etc/httpd/conf/httpd.conf
+	fi
+}  
+
+function PHP {
+	if [ "$DISTRO" = "ubuntu" ] ; then
+		sudo subl  /etc/php5/apache2/php.ini
+		sudo subl  /etc/php5/cli/php.ini
+		sudo subl  /etc/php/7.0/apache2/php.ini
+		sudo subl  /etc/php/7.0/apache2/php.ini
+		
+	fi
+
+	if [ "$DISTRO" = "centos" ] ; then
+		sudo subl subl /etc/php.ini
+	fi
+}  
+
 function c() {
     new_directory="$*";
     new_directory_len=${#new_directory}
