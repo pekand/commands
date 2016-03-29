@@ -3,27 +3,32 @@
 #dump database tables per file
 
 #CONFIG
-DATABASE="database"
+DATABASE=$1
 USER="root"
 PASSWORD="root"
 STAMP=$(date -d "today" +"%Y-%m-%d-%H-%M")
 DIR=$DATABASE-$STAMP
-TABLES=$(mysql -N -B -u $USER -p$PASSWORD $DATABASE -e 'show tables;')
 
 
-#DIR
-mkdir $DIR
-if [ -d "$DIR" ]; then	
-	#STRUCTURE
-	echo "$DIR/structure.sql"
-	mysqldump --skip-add-drop-table -d -u $USER -p$PASSWORD $DATABASE > $DIR/structure.sql
-	#FILES
-	for T in $TABLES;
-	do
-	    echo "$DIR/$T.sql.gz"
-	    mysqldump --no-create-info --skip-add-drop-table --compact -u $USER -p$PASSWORD $DATABASE $T | gzip > $DIR/$T.sql.gz
-	done;
-	#COMPRESS
-	tar zcvf $DIR.tar.gz $DIR
-	rm -r $DIR
+
+if [ ! -z "$DATABASE" ]; then	
+	
+	TABLES=$(mysql -N -B -u $USER -p$PASSWORD $DATABASE -e 'show tables;')
+
+	#DIR
+	mkdir $DIR
+	if [ -d "$DIR" ]; then	
+		#STRUCTURE
+		echo "$DIR/structure.sql"
+		mysqldump --skip-add-drop-table -d -u $USER -p$PASSWORD $DATABASE > $DIR/structure.sql
+		#FILES
+		for T in $TABLES;
+		do
+		    echo "$DIR/$T.sql.gz"
+		    mysqldump --no-create-info --skip-add-drop-table --compact -u $USER -p$PASSWORD $DATABASE $T | gzip > $DIR/$T.sql.gz
+		done;
+		#COMPRESS
+		tar zcvf $DIR.tar.gz $DIR
+		rm -r $DIR
+	fi
 fi
