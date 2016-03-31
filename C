@@ -684,7 +684,9 @@ elif [ "$1" = "server" ]; then
         fi
 
         if [ "$distro" = "centos" ]; then
-            RED "mysql and apache restart"
+            RED "mariadb and apache and cntlm restart"
+            #restart mysql        	
+            sudo systemctl restart mariadb
             #restart cntlm        	
             sudo systemctl restart cntlmd
             #restart apache
