@@ -1,33 +1,35 @@
 #!/bin/bash
 
 # repeat comand 
+# sudo apt-get install php5-sqlite3
 
 #save last command command
 function SV() {
     commandNum=2
-    if [ "$1" != "" ] && [[ $1 =~ ^[0-9]+$ ]]; then #get N command; check if is num
-        commandNum=$(($1+1))
-        shift
+    if [ "$2" != "" ] && [[ $2 =~ ^[0-9]+$ ]]; then #get N command; check if is num
+        commandNum=$(($2+1))
     fi;
 
     savedCommand=$(fc -l -${commandNum} | sed -n 1p | cut -c 4-) # | sed -n 1p | cut -c 4-
     
     aliasName=""
-    if [ "$1" = "as" ] && [ "$2" != "" ]; then
-      aliasName="$2"
+    if [ "$1" != "" ]; then
+      aliasName="$1"
     fi;
 
     nowTime=`date +"%Y-%m-%d %H:%M:%S"`
     aliasId=`DB query "select id from cmd where alias = '${aliasName}'" --single`
 
-    if [ "$aliasId" = "" ]; then
-      echo "cmd insert: $savedCommand"
-      echo "alias: $aliasName"
-      DB exec "INSERT INTO cmd (alias, cmd, exec_time) VALUES ('${aliasName}', '${savedCommand}', '${nowTime}')"
-    else
-      echo "cmd update: $savedCommand"
-      echo "alias: $aliasName"
-      DB exec "UPDATE cmd SET cmd = '${savedCommand}', exec_time = '${nowTime}' WHERE id = '${aliasName}' "
+    if [ "$aliasName" != "" ] && [ "$savedCommand" != "" ]; then
+      if [ "$aliasId" = "" ]; then
+        echo "cmd insert: $savedCommand"
+        echo "alias: $aliasName"
+        DB exec "INSERT INTO cmd (alias, cmd, exec_time) VALUES ('${aliasName}', '${savedCommand}', '${nowTime}')"
+      else
+        echo "cmd update: $savedCommand"
+        echo "alias: $aliasName"
+        DB exec "UPDATE cmd SET cmd = '${savedCommand}', exec_time = '${nowTime}' WHERE id = '${aliasName}' "
+      fi;
     fi;
 }
 
@@ -53,6 +55,9 @@ elif [ "$1" = "--remove" ] && [ "$2" != "" ]; then
         echo "remove alias: $removeAlias"
         DB exec "DELETE from cmd WHERE alias = '${removeAlias}'"
       fi;
+elif [ "$1" = "--clean-all" ]; then
+      echo "Purge cmd table"
+      DB exec "DELETE from cmd WHERE 1;"
 elif [ "$1" != "" ]; then
     cmd=`DB query "select cmd from cmd where alias = '$1'" --single`
     echo "run: $cmd"
@@ -63,9 +68,9 @@ elif [ "$1" = "" ]; then
     echo ". DO --load         >> load SV function"
     echo "DO {alias}          >> run command"
     echo "SV                  >> insert or update last command"
-    echo "SV {n}              >> save last {n} command"
-    echo "SV as {alias}       >> save last command with {alias}"
-    echo "SV {n} as {alias}   >> save last {n} command with {alias}"
+    echo "SV {alias}          >> save last command with {alias}"
+    echo "SV {alias} {n}      >> save last {n} command with {alias}"
     echo "DO --remove {alias} >> remove command with {alias} from db"
     echo "DO --remove {id}    >> remove command with {id} from db"
+    echo "DO --clean-all      >> purge database"
 fi;

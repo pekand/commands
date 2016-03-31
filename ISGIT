@@ -1,2 +1,10 @@
 #!/bin/bash
-git rev-parse 2> /dev/null; [ $? == 0 ] && echo 1
+
+#check if current directory is svn repository
+
+git rev-parse 2> /dev/null
+if [ $? == 0 ]; then #check last command exit code
+	echo 1
+else
+	echo 0
+fi

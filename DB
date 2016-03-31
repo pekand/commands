@@ -1,6 +1,11 @@
 #!/usr/bin/php
 <?php
 
+if (!class_exists('SQLite3')) {
+    echo "install sqlite3 first, forexample: 'apt-get install php5-sqlite3'";
+    die("SQLite3 class not found!");
+}
+
 #var_dump($argv);
 $params = $argv;
 array_shift($params);

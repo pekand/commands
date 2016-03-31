@@ -1,2 +1,10 @@
 #!/bin/bash
-svn info > /dev/null 2>&1; [ $? == 0 ] && echo 1
+
+#check if current directory is svn repository
+
+svn info > /dev/null 2>&1
+if [ $? == 0 ]; then #check last command exit code
+	echo 1
+else
+	echo 0
+fi
