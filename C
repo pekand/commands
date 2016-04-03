@@ -684,7 +684,9 @@ elif [ "$1" = "server" ]; then
         fi
 
         if [ "$distro" = "centos" ]; then
-            RED "mysql and apache restart"
+            RED "mariadb and apache and cntlm restart"
+            #restart mysql        	
+            sudo systemctl restart mariadb
             #restart cntlm        	
             sudo systemctl restart cntlmd
             #restart apache
@@ -1032,6 +1034,17 @@ elif [ "$1" = "cache" ]; then
 
 elif [ "$1" = "system" ]; then
 
+    if [ "$2" = "version" ]; then    
+
+        if [ "$distro" = "ubuntu" ]; then
+            lsb_release -a
+        fi
+
+        if [ "$distro" = "centos" ]; then
+            lsb_release -d
+        fi
+    fi
+
     if [ "$2" = "update" ]; then
         RED "System update"
         sudo apt-get update        # Fetches the list of available updates
@@ -1061,6 +1074,7 @@ elif [ "$1" = "system" ]; then
 
     if [ "$2" = "" ]; then
         echo "system                       >>"
+        echo "  version                    >>"
         echo "  update                     >> download ubuntu updates"
         echo "  hibernate                  >> hibernate"
         echo "  screen                     >> screen layout settings"

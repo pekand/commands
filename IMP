@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#import database tables per file
+
+#CONFIG
+DATABASE=$2
+DBHOST="localhost"
+USER="root"
+PASSWORD="root"
+
+#DIR
+if [ ! -z "$DATABASE" ]; then
+
+	echo "Database $DATABASE create"
+    mysql -u $USER -p$PASSWORD -h $DBHOST -e "create database $DATABASE character set utf8 collate utf8_general_ci;"
+
+	
+	#STRUCTURE
+	echo "structure.sql"
+	mysql -u $USER -p$PASSWORD -h $DBHOST $DATABASE < structure.sql
+	#FILES
+	for T in *.sql.gz; do
+		 echo "$T"
+	     zcat $T | mysql -u $USER -p$PASSWORD -h $DBHOST $DATABASE
+	done;	
+fi	
