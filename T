@@ -13,6 +13,21 @@ if (isset($argv[1]) && ($argv[1]=='db')) {
 }else if (isset($argv[1]) && !isset($argv[2])) {
     $dbname = $argv[1];
     print_r(getTableNames($db, $dbname, $table));
+}else if (isset($argv[1]) && isset($argv[2]) && isset($argv[3])) {
+    $dbname = array($argv[1]);
+    $table = array();
+    if (isset($argv[2]) && $argv[2]!="") {
+        $table = explode(",", $argv[2]);
+    }
+
+    $columns = array();
+    if (isset($argv[3]) && $argv[3]!="") {
+        $columns = explode(",", $argv[3]);
+    }
+
+    $match = searchfor($db, $dbname, $table, $columns);
+
+    print_r($match);
 }else if (isset($argv[1]) && isset($argv[2])) {
     $dbname = array($argv[1]);
     $table = array();
@@ -25,9 +40,10 @@ if (isset($argv[1]) && ($argv[1]=='db')) {
     print_r($match);
 
 } else {
-    echo "T db - list databases";
-    echo "T {dbname} - list tables";
-    echo "T {dbname} {tablename} - print table";
+    echo "T db - list databases".PHP_EOL;
+    echo "T {dbname} - list tables".PHP_EOL;
+    echo "T {dbname} {tablename} - print table".PHP_EOL;
+    echo "T {dbname} {tablename} {column} - print column".PHP_EOL;
     die();
 }
 
@@ -77,7 +93,7 @@ function getcolumns($db, $dbname, $dbtable)
     return $data;
 }
 
-function searchfor($db, $dbname_select = array(), $table_select = array())
+function searchfor($db, $dbname_select = array(), $table_select = array(), $columns_select = array())
 {
 
     $dbnames = array();
@@ -110,7 +126,13 @@ function searchfor($db, $dbname_select = array(), $table_select = array())
 
         $data = array();
         foreach($tables as $table){
-            $query = "SELECT * FROM ".$table." WHERE true";
+            $columnList = "*";
+
+            if (count($columns_select) > 0){
+                $columnList = join(", ", $columns_select);                
+            }
+
+            $query = "SELECT ".$columnList." FROM ".$table." WHERE true";
 
             //print_r($query);
 
