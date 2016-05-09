@@ -3,7 +3,7 @@
 #import database tables per file
 
 #CONFIG
-DATABASE=$2
+DATABASE=$1
 DBHOST="localhost"
 USER="root"
 PASSWORD="root"
@@ -23,4 +23,4 @@ if [ ! -z "$DATABASE" ]; then
 		 echo "$T"
 	     zcat $T | mysql -u $USER -p$PASSWORD -h $DBHOST $DATABASE
 	done;	
-fi	
+fi
