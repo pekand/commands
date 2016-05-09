@@ -524,7 +524,7 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
     elif [ "$2" = "export" ]; then
 
         if [ "$3" = "compress" ] && [ "$4" != "" ]; then
-            RED "Mysql export to file"
+            RED "Mysql export to file with db drop "
             mysqldump -h localhost -u root -proot --add-drop-database --databases "$4" | gzip > "$4-$(date -d "today" +"%Y-%m-%d-%H-%M").sql.gz"
         elif [ "$3" = "raw" ] && [ "$4" = "drop" ] && [ "$5" != "" ]; then
             RED "Mysql export to file with drop"
@@ -678,20 +678,24 @@ elif [ "$1" = "server" ]; then
 
         if [ "$distro" = "ubuntu" ]; then
             RED "mysql and apache restart"
+            COLOR "<green>restart mysql</green>"
             sudo service mysql restart
+            COLOR "<green>restart apache</green>"
             sudo service apache2 restart
             echo "DONE"
         fi
 
         if [ "$distro" = "centos" ]; then
             RED "mariadb and apache and cntlm restart"
-            #restart mysql        	
+            COLOR "<green>restart mysql</green>"
             sudo systemctl restart mariadb
-            #restart cntlm        	
+            COLOR "<green>restart cntlm</green>"
             sudo systemctl restart cntlmd
-            #restart apache
+            COLOR "<green>restart memcache</green>"
+            sudo systemctl restart memcached
+            COLOR "<green>restart apache</green>"
 			sudo systemctl restart httpd 
-		    echo "DONE"
+		    COLOR "<green>DONE</green>"
 	    fi
 
     elif [ "$2" = "kill" ]; then
