@@ -1,4 +1,4 @@
-#!/bin/bash
+    #!/bin/bash
 
 OS=$(uname -s)
 ARCH=$(uname -m)
@@ -548,22 +548,25 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
 
     elif [ "$2" = "import" ]; then
 
-        if [ "$3" = "compressed" ]; then
-            RED "Mysql import from file.sql.gz"
-            #zcat DB_File_Name.sql.gz | mysql -u username -p Target_DB_Name
-            zcat "$4.sql.gz" | mysqldump -h localhost -uroot -proot --add-drop-database --databases
+        if [ "$3" = "gz" ] && [ "$4" != "" ] && [ "$5" != "" ]; then
+            RED "Mysql import from {file.sql.gz} to {db}"
+            zcat "$4" | mysql -f -u 'root' -p'root' "$5"
+
+        elif [ "$3" = "gz" ] && [ "$4" != "" ] && [ "$5" = "" ]; then
+            RED "Mysql import from {file.sql.gz}"
+            zcat "$4" | mysql -f -u 'root' -p'root'
 
         elif [ "$3" = "raw" ]; then
-            RED "Mysql import from file.sql"
-            mysql -h localhost -u root -proot < $3
+            RED "Mysql import from {file.sql}"
+            mysql -f -h localhost -u root -proot < $3
 
         elif [ "$3" != "" ] && [ "$4" != "" ]; then
-            RED "Mysql import from file"
-            mysql -f -h localhost -uroot -proot $3 < $4
+            RED "Mysql import to {db} from {file.sql}"
+            mysql -f -h 127.0.0.1 -uroot -proot $3 < $4
 
         elif [ "$3" != "" ] && [ "$4" = "" ]; then
-            RED "Mysql import from file"
-            mysql -h localhost -uroot -proot < $3
+            RED "Mysql import from {file.sql}"
+            mysql -f -h localhost -uroot -proot < $3
         fi
 
     elif [ "$2" = "drop" ]; then
@@ -626,10 +629,11 @@ elif [ "$1" = "database" ] || [ "$1" = "db" ]; then
         echo "  export raw structure {db}  >>  export to raw sql file with only structure"
         echo "  export raw {db}            >>  export to raw sql file"
         echo "  export stream {db}         >>  export to editor"
-        echo "  import {db} {file}         >>  import file to db"
+        echo "  import {db} {file.sql}         >>  import file to db"
         echo "  import {file.sql}          >>  import file to db"
         echo "  import raw {file.sql}      >>  import file to db"
-        echo "  import compressed {file.sql.gz} >>  import file to db"
+        echo "  import gz {file.sql.gz} {db}>>  import file to db"
+        echo "  import gz {file.sql.gz}    >>  import file to db"
         echo "  query {db} {query}         >> "
         echo "  drop {dbname}              >> drop database"
         echo "  purge {dbname}             >> backup drop and create database"
