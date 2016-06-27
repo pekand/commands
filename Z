@@ -2,44 +2,43 @@
 
 #compress and decompress
 
-echo $1
 filename=$1
-if [ "$filename" != "" ]; then	
-	
-	if [[ -f $filename ]] && [[ ${file: -4} == ".zip" ]]; then
+if [ "$filename" != "" ]; then
+
+	if [[ -f $filename ]] && [[ ${filename: -4} == ".zip" ]]; then
 		COLOR "decompress <yellow>$filename</yellow>"
 		unzip $1
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".tar.gz" ]]; then
+	elif [[ -f $filename ]] && [[ ${filename: -7} == ".tar.gz" ]]; then
 		COLOR "decompress <yellow>$filename</yellow>"
 		tar -xvzf $filename
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".tar" ]]; then
-		COLOR "decompress <yellow>$filename</yellow>"		
-		tar -xvf $filename
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".gz" ]]; then
+	elif [[ -f $filename ]] && [[ ${filename: -4} == ".tar" ]]; then
 		COLOR "decompress <yellow>$filename</yellow>"
-		gunzip $filename	 
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".7z" ]]; then
-		COLOR "decompress <yellow>$filename</yellow>"		
+		tar -xvf $filename
+	elif [[ -f $filename ]] && [[ ${filename: -3} == ".gz" ]]; then
+		COLOR "decompress <yellow>$filename</yellow>"
+		gunzip $filename
+	elif [[ -f $filename ]] && [[ ${filename: -3} == ".7z" ]]; then
+		COLOR "decompress <yellow>$filename</yellow>"
 		7z x $filename
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".rar" ]]; then
-		COLOR "decompress <yellow>$filename</yellow>"		
+	elif [[ -f $filename ]] && [[ ${filename: -4} == ".rar" ]]; then
+		COLOR "decompress <yellow>$filename</yellow>"
 		unrar e -r $filename
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".tar.bz2" ]]; then
-		COLOR "decompress <yellow>$filename</yellow>"				
+	elif [[ -f $filename ]] && [[ ${filename: -8} == ".tar.bz2" ]]; then
+		COLOR "decompress <yellow>$filename</yellow>"
 		tar xjf $filename
-	elif [[ -f $filename ]] && [[ ${file: -4} == ".bz2" ]]; then
-		COLOR "decompress <yellow>$filename</yellow>"		
+	elif [[ -f $filename ]] && [[ ${filename: -4} == ".bz2" ]]; then
+		COLOR "decompress <yellow>$filename</yellow>"
 		bzip2 -d $filename
 	elif [ -f $filename ] || [ -d $filename ]; then
-		
+
 		name=$2
 		if [ "$name" = "" ]; then
 			name=ar-`date +"%Y-%m-%d-%H-%M-%S"`
 		fi
 
-		archivename=ar-`basename "$filename"`-`date +"%Y-%m-%d-%H-%M-%S"`
+		archivename=`basename "$filename"`-`date +"%Y-%m-%d-%H-%M-%S".tar.gz`
 		COLOR "compress <yellow>$filename</yellow> to <green>$archivename</green>"
-	    tar czf $archivename $filename	
+	    tar czf $archivename $filename
 	fi
 else
 	COLOR "<yellow>{dir|file} {name} </yellow> <green>></green> compress {name}.tar.gz"
