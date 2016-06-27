@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# run query
+if [ "$1" = "query" ] && [ "$2" != "" ]; then
+    query=$2
+    if [ "$2" = "-" ]; then
+        echo "query:"
+        read query
+    fi
+    mysql -u root -proot -e "$query\G"
+elif [ "$1" != "" ] && [ "$2" != "" ]; then
+    query=$2
+    if [ "$2" = "-" ]; then
+        echo "query:"
+        read query
+    fi
+    mysql -u root -proot $1 -e "$query\G"
+else
+    COLOR "run query in local sql"
+    echo  "query {query}     >> run query"
+    echo  "{dbname} {query}    >> run query"
+fi
