@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Save permissions and restore
+if [ "$1" = "save" ]; then
+
+    INPATH="."
+    if [ "$2" != "" ]; then
+        INPATH="$2"
+    fi
+
+    find $INPATH -depth -exec stat --format '%a %U %G %n' {} + 
+
+elif [ "$1" = "restore" ] && [ "$2" != "" ]; then
+    while read PERMS OWNER GROUP FILE
+    do
+        if [ "$3" != "" ]; then
+            FILE=$3/$FILE
+        fi
+
+        echo $PERMS $OWNER $GROUP $FILE
+        chmod "$PERMS" "$FILE"
+        chown "${OWNER}:${GROUP}" "$FILE"
+    done <$2
+else
+    COLOR "backup file permissions"
+    echo  "save [path]     >> save"
+    echo  "restore {bckgfile} [path]  >> restore"
+fi
