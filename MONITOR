@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# monitor queris in db
+
+br=$1
+
+if [ "$1" = "list" ]; then
+    COLOR "<yellow>log start</yellow>"
+    gsql "" "mysql|general_log" "" | isubl
+elif [ "$1" = "start" ]; then
+    COLOR "<green>log start</green>"
+    SQL query "SET GLOBAL general_log = 'ON';"
+elif [ "$1" = "stop" ]; then
+    COLOR "<green>log stop</green>"
+    SQL query "SET GLOBAL general_log = 'OFF';"
+elif [ "$1" = "run" ]; then
+    COLOR "<green>log start</green>"
+    SQL query "SET GLOBAL general_log = 'ON';"
+    read -n1 -r -p "Press any key to continue..." key
+    SQL query "SET GLOBAL general_log = 'OFF';"
+elif [ "$1" = "clean" ]; then
+    COLOR "<red>log clean</red>"
+    SQL query "TRUNCATE table mysql.general_log;"
+
+elif [ "$1" = "status" ]; then
+    COLOR "<green>log status</green>"
+    SQL query  'SHOW VARIABLES LIKE "general_log%";'
+else
+    COLOR "Current branch is <bpurple>$1anch</bpurple> in repository <bcyan>$repo</bcyan>"
+    echo "list     >> "
+    echo "start    >> "
+    echo "stop     >> "
+    echo "run      >> run until keypress"
+    echo "clean    >> "
+    echo "status   >> "
+fi
