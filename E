@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # open file or directory sublime text shortcut
@@ -7,6 +7,11 @@ import sys
 import os
 import re
 import fileinput
+import subprocess
+
+def cmd_exists(cmd):
+    return subprocess.call("type " + cmd, shell=True,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE) == 0
 
 def touch(path):
     with open(path, 'a'):
@@ -25,6 +30,9 @@ else:
                 #if not os.path.isfile(matchObj.group(1)):
                     #touch(matchObj.group(1))
 
-                if os.path.isfile(matchObj.group(1)):
-                    os.system('subl "'+arg+'"')
+                if cmd_exists("subl"): 
+                    if os.path.isfile(matchObj.group(1)):
+                        os.system('subl "'+arg+'"')
+                else:
+                    os.system('sudo vim "'+arg+'"')
 exit(0);
