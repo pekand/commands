@@ -13,12 +13,12 @@ if [ "$1" = "url" ]; then
     if [ -z "$2" ];
     then
         pwd=$(pwd)
-        enc=$(python -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
+        enc=$(python3 -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
         firefox "http://grep.dev/grep.php?view=search&dir=$enc&file_find=file_find&grep=grep"
     else
         pwd=$(pwd)
-        enc=$(python -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
-        param=$(python -c "import sys, urllib as ul; print ul.quote_plus('$2')")
+        enc=$(python3 -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
+        param=$(python3 -c "import sys, urllib as ul; print ul.quote_plus('$2')")
         #firefox "http://grep.dev/grep.php?search=&view=search&replacestring=&dir=$enc&ext_check=&file_find=file_find&grep=grep"
         firefox "http://grep.dev/grep.php?search=$param&view=search&dir=$enc&file_find=file_find&grep=grep"
     fi
