@@ -2,4 +2,59 @@
 
 #docker
 
-repo=$(basename `git rev-parse --show-toplevel`)
+if [ "$1" = "containers" ] || [ "$1" = "container" ] ||[ "$1" = "cont" ] || [ "$1" = "cnt" ] || [ "$1" = "ps" ]; then
+    if [ "$2" = "stop" ] && [ "$3" != "" ]; then
+         docker stop $3
+    elif [ "$2" = "" ]; then
+         docker ps -a
+    fi
+elif [ "$1" = "img" ]; then
+    if [ "$2" = "remove" ] && [ "$3" != "" ]; then
+         docker rm $3
+    elif [ "$2" = "" ]; then
+         docker images
+    fi
+elif [ "$1" = "login" ]; then
+    if [ "$2" != "" ]; then
+         docker run -it -d $2 /bin/bash
+    else
+         docker ps -a
+    fi
+elif [ "$1" = "run" ]; then
+    if [ "$2" != "" ]; then
+         docker exec -it $2 /bin/bash
+    else
+         docker ps -a
+    fi
+
+elif [ "$1" = "stop" ]; then
+    if [ "$2" != "" ]; then
+         docker stop $2
+    else
+         docker ps -a
+    fi
+
+elif [ "$1" = "diff" ]; then
+    if [ "$2" != "" ]; then
+         docker diff $2
+    else
+         docker ps -a
+    fi
+elif [ "$1" = "rm" ]; then
+    if [ "$2" != "" ]; then
+         docker rm $2
+    else
+         docker ps -a
+    fi
+else
+    echo "Docker shortcuts"
+    echo "containers|cont|cnt|ps     >> list containers"
+    echo "container stop {container} >> stop container"
+    echo "img                        >> list images"
+    echo "img remove {image}         >> remove image"
+    echo "login {container}          >> login to runing container"
+    echo "run {container}            >> run container"
+    echo "stop {container}           >> stop container"
+    echo "diff {container}           >> view changes"
+    echo "rm {container}             >> view changes"
+fi
