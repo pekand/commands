@@ -26,12 +26,12 @@ alias SRC="cd /var/www/src/"
 
 DISTRO="unknown"
 SERVERUSER="www-data"
-if python -mplatform | grep Ubuntu >> /dev/null ; then
+if python3 -mplatform | grep Ubuntu >> /dev/null ; then
      DISTRO="ubuntu"
      SERVERUSER="www-data"
 fi
 
-if python -mplatform | grep Centos >> /dev/null ; then
+if python3 -mplatform | grep Centos >> /dev/null ; then
      DISTRO="centos"
      SERVERUSER="apache"
 fi
@@ -90,7 +90,7 @@ function UP() {
     builtin cd "${REPO_HOME}"
 }
 
-directory=/home/kerberos/history/
+directory=~/history/
 if [ ! -d $directory ]; then
   mkdir $directory
 fi

@@ -1,17 +1,30 @@
 #!/bin/bash
 
-# repeat comand 
+# repeat comand
 # sudo apt-get install php5-sqlite3
 
 #save last command command
+
+create_func_with_name() {
+  eval "$1() {
+    DO $1
+  }"
+}
+
 function SV() {
-    commandNum=2
-    if [ "$2" != "" ] && [[ $2 =~ ^[0-9]+$ ]]; then #get N command; check if is num
-        commandNum=$(($2+1))
+    if [ "$2" = "" ] || [[ $2 =~ ^[0-9]+$ ]]; then
+        commandNum=2
+        if [ "$2" != "" ]; then
+            if [[ $2 =~ ^[0-9]+$ ]]; then #get N command; check if is num
+                commandNum=$(($2+1))
+            fi;
+        fi;
+
+        savedCommand=$(fc -l -${commandNum} | sed -n 1p | cut -c 4-) # | sed -n 1p | cut -c 4-
+    else
+        savedCommand="${@:2}"
     fi;
 
-    savedCommand=$(fc -l -${commandNum} | sed -n 1p | cut -c 4-) # | sed -n 1p | cut -c 4-
-    
     aliasName=""
     if [ "$1" != "" ]; then
       aliasName="$1"
@@ -22,32 +35,64 @@ function SV() {
 
     if [ "$aliasName" != "" ] && [ "$savedCommand" != "" ]; then
       if [ "$aliasId" = "" ]; then
-        echo "cmd insert: $savedCommand"
-        echo "alias: $aliasName"
+        echo "cmd insert: $aliasName"
+        echo "command: $savedCommand"
         DB exec "INSERT INTO cmd (alias, cmd, exec_time) VALUES ('${aliasName}', '${savedCommand}', '${nowTime}')"
+        #create alias $aliasName
+        create_func_with_name  $aliasName
       else
-        echo "cmd update: $savedCommand"
-        echo "alias: $aliasName"
-        DB exec "UPDATE cmd SET cmd = '${savedCommand}', exec_time = '${nowTime}' WHERE id = '${aliasName}' "
+        echo "cmd update: $aliasName"
+        echo "command: $savedCommand"
+        DB exec "UPDATE cmd SET cmd = '${savedCommand}', exec_time = '${nowTime}' WHERE alias = '${aliasName}' "
+        #create alias $aliasName
+        create_func_with_name  $aliasName
       fi;
+    else
+        echo "SV                  >> insert or update last command"
+        echo "SV {alias}          >> save last command with {alias}"
+        echo "SV {alias} {n}      >> save last {n} command with {alias}"
     fi;
 }
 
-if [ "$1" = "--list" ]; then
+for var in "$@"
+do
+    if [ "$var" = "--list" ]; then
+        param_list=1
+    elif [ "$var" = "--load" ]; then
+        param_load=1
+    elif [ "$var" = "--init" ]; then
+        param_init=1
+    elif [ "$var" = "--view" ] || [ "$var" = "-v" ]; then
+        param_view=1
+    elif [ "$var" = "--remove" ]; then
+        param_remove=1
+    elif [ "$var" = "--clean-all" ]; then
+        param_clean_all=1
+    else
+        param_value="$var"
+    fi
+done
+
+if [ ! -z "$param_list" ] ; then
     DB query "select * from cmd"
-elif [ "$1" = "--load" ]; then
+elif [ ! -z "$param_load" ]; then
     export -f SV
-elif [ "$1" = "--init" ]; then
+    aliases=`DB query "select alias from cmd" --simple`
+    while IFS= read
+    do
+        create_func_with_name $REPLY
+    done <<< "$aliases"
+elif [ ! -z "$param_init" ]; then
     echo "create table"
     DB exec "CREATE TABLE IF NOT EXISTS cmd
         (
-            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
             alias VARCHAR(255) NULL,
             cmd VARCHAR(255) NOT NULL,
             exec_time VARCHAR(20) NOT NULL
         );"
-elif [ "$1" = "--remove" ] && [ "$2" != "" ]; then
-      removeAlias="$2"
+elif [ ! -z "$param_remove" ] && [ ! -z "$param_value" ]; then
+      removeAlias="$param_value"
       if [[ $removeAlias =~ ^[0-9]+$ ]]; then #remove with id
         echo "remove id: $removeAlias"
         DB exec "DELETE from cmd WHERE id = '${removeAlias}'"
@@ -55,18 +100,24 @@ elif [ "$1" = "--remove" ] && [ "$2" != "" ]; then
         echo "remove alias: $removeAlias"
         DB exec "DELETE from cmd WHERE alias = '${removeAlias}'"
       fi;
-elif [ "$1" = "--clean-all" ]; then
+elif [ ! -z "$param_clean_all" ]; then
       echo "Purge cmd table"
       DB exec "DELETE from cmd WHERE 1;"
-elif [ "$1" != "" ]; then
-    cmd=`DB query "select cmd from cmd where alias = '$1'" --single`
-    echo "run: $cmd"
-    eval $cmd
-elif [ "$1" = "" ]; then
+elif [ ! -z "$param_value" ]; then
+    cmd=`DB query "select cmd from cmd where alias = '$param_value'" --single`
+
+    if [ ! -z "$param_view" ]; then
+        echo $cmd
+    else
+        eval $cmd
+    fi;
+
+elif [ -z "$param_value" ]; then
     echo "DO --list           >> list all commands"
     echo "DO --init           >> create table cmd"
-    echo ". DO --load         >> load SV function"
+    echo ". DO --load         >> load SV function and all aliases from db"
     echo "DO {alias}          >> run command"
+    echo "DO {alias} --view   >> display command"
     echo "SV                  >> insert or update last command"
     echo "SV {alias}          >> save last command with {alias}"
     echo "SV {alias} {n}      >> save last {n} command with {alias}"

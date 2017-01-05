@@ -30,14 +30,14 @@ $db->enableExceptions(true);
 // DB --init
 if ($initDatabase || in_array("--init", $params)) {
     echo "Create tables\n";
-    $db->exec('     
+    $db->exec('
     ');
 }
 
 // DB exec {query}
 if (!empty($params[0]) && $params[0]=="exec" && !empty($params[1])) {
     $query = $params[1];
-    
+
     try {
         $db->exec($query);
     }
@@ -59,7 +59,7 @@ if (!empty($params[0]) && $params[0]=="query" && !empty($params[1])) {
     catch (Exception $exception) {
         echo "ERROR: ".$exception->getMessage();die();
     }
-    
+
     if (in_array("--single", $params)) { //return first element as string
         if (!empty($data) && is_array($data)) {
             $data = array_shift($data);
@@ -72,7 +72,17 @@ if (!empty($params[0]) && $params[0]=="query" && !empty($params[1])) {
         if (!empty($data)) {
             echo $data;
         }
-        
+
+    } elseif (in_array("--simple", $params)) { //return table by line and column separated by tab
+        foreach ($data as $line) {
+            $i=0;
+            foreach ($line as $column) {
+                echo $column;
+                if(count($line)-1!=$i++)
+                    echo "\t";
+            }
+            echo "\n";
+        }
     } else {
         echo json_encode($data, JSON_PRETTY_PRINT); // return all as json
     }

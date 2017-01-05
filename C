@@ -1,4 +1,4 @@
-    #!/bin/bash
+#!/bin/bash
 
 OS=$(uname -s)
 ARCH=$(uname -m)
@@ -312,7 +312,7 @@ elif [ "$1" = "per" ] || [ "$1" = "permit" ] || [ "$1" = "right" ] || [ "$1" = "
 
     elif [ "$2" = "default" ]; then
         RED "Set server premission"
-        
+
         if [ "$3" != "" ]; then
             cd $3
         fi
@@ -422,7 +422,7 @@ elif [ "$1" = "elastic" ] || [ "$1" = "search" ]; then
 
     elif [ "$2" != "" ] && [ "$3" != "" ]; then
         RED "Elastic $2"
-        curl -s -XPOST "http://localhost:9200/$2/$3/_search?size=10000" -d '{"query": {"match_all": {}}}' | python -mjson.tool | isubl
+        curl -s -XPOST "http://localhost:9200/$2/$3/_search?size=10000" -d '{"query": {"match_all": {}}}' | python3 -mjson.tool | isubl
 
     elif [ "$2" != "" ]; then
         RED "Elastic index $2 mapping"
@@ -678,7 +678,7 @@ elif [ "$1" = "dns" ]; then
 
 elif [ "$1" = "server" ]; then
 
-    if [ "$2" = "restart" ]; then        	
+    if [ "$2" = "restart" ]; then
 
         if [ "$distro" = "ubuntu" ]; then
             RED "mysql and apache restart"
@@ -698,7 +698,7 @@ elif [ "$1" = "server" ]; then
             COLOR "<green>restart memcache</green>"
             sudo systemctl restart memcached
             COLOR "<green>restart apache</green>"
-			sudo systemctl restart httpd 
+			sudo systemctl restart httpd
 		    COLOR "<green>DONE</green>"
 	    fi
 
@@ -802,10 +802,10 @@ elif [ "$1" = "edit" ]; then
 
     if [ "$2" = "script" ]; then
         E ~/commands/
-        
+
     elif [ "$2" = "hosts" ] || [ "$2" = "host" ]; then
         sudo subl /etc/hosts
-	
+
 	elif [ "$2" = "proxy" ]; then
         sudo subl /etc/cntlm.conf
 
@@ -1042,7 +1042,7 @@ elif [ "$1" = "cache" ]; then
 
 elif [ "$1" = "system" ]; then
 
-    if [ "$2" = "version" ]; then    
+    if [ "$2" = "version" ]; then
 
         if [ "$distro" = "ubuntu" ]; then
             lsb_release -a
@@ -1110,6 +1110,10 @@ elif [ "$1" = "space" ]; then
     RED "Free disc space"
     df -h
 
+elif [ "$1" = "memory" ]; then
+    RED "Free memory"
+    free -h
+
 elif [ "$1" = "routes" ]; then
     RED "Get routes "
     Z router:debug | isubl
@@ -1125,7 +1129,7 @@ elif [ "$1" = "session" ]; then
 
 elif [ "$1" = "grep" ]; then
     pwd=$(pwd)
-    enc=$(python -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
+    enc=$(python3 -c "import sys, urllib as ul; print ul.quote_plus('$pwd')")
     firefox "http://grep.dev/grep.php?wait=wait&view=search&find=Find&dir=$enc&file_find=file_find&grep=grep"
 
 elif [ "$1" = "config" ]; then
@@ -1212,7 +1216,7 @@ elif [ "$1" = "mail" ]; then
 
     if [ "$2" = "catch" ]; then
         RED "Run mail server for debuging "
-        sudo python -m smtpd -n -c DebuggingServer localhost:25
+        sudo python3 -m smtpd -n -c DebuggingServer localhost:25
     fi
 
     if [ "$2" = "start" ]; then
@@ -1292,7 +1296,7 @@ elif [ "$1" = "view" ] && [ "$2" = "apache" ] && [ "$3" = "log" ]; then
         sudo subl /var/log/httpd/error_log
 
 elif [ "$1" = "link" ]; then
-    
+
     if [ "$2" != "" ] && [ "$3" != "" ]; then
         ln -s /var/www/http/$2 $3
     fi
@@ -1328,6 +1332,7 @@ else
         echo "system                       >> "
         echo "documentation|doc            >> doxygen documentation"
         echo "space                        >> free disc space"
+        echo "memory                       >> free memory"
         echo "routes                       >> view symfony project routes"
         echo "session clear                >> delete php sessions"
         echo "grep                         >> show grep"
