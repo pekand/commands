@@ -1114,6 +1114,10 @@ elif [ "$1" = "memory" ]; then
     RED "Free memory"
     free -h
 
+elif [ "$1" = "cron" ]; then
+    RED "View cron jobs"
+    sudo crontab -e
+
 elif [ "$1" = "routes" ]; then
     RED "Get routes "
     Z router:debug | isubl
@@ -1333,6 +1337,7 @@ else
         echo "documentation|doc            >> doxygen documentation"
         echo "space                        >> free disc space"
         echo "memory                       >> free memory"
+        echo "cron                         >> view cron jobs"
         echo "routes                       >> view symfony project routes"
         echo "session clear                >> delete php sessions"
         echo "grep                         >> show grep"
