@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# manage services
+
+if [ "$1" = "start" ] && [ "$2" != "" ]; then
+    sudo systemctl start "$2"
+    sudo systemctl status "$2"
+elif [ "$1" = "stop" ] && [ "$2" != "" ]; then
+    sudo systemctl stop "$2"
+    sudo systemctl status "$2"
+elif [ "$1" = "restart" ] && [ "$2" != "" ]; then
+    sudo systemctl restart "$2"
+    sudo systemctl status "$2"
+elif [ "$1" = "list" ]; then
+    systemctl list-units --type service
+elif [ "$1" != "" ] && [ "$2" = "" ]; then
+    sudo systemctl restart "$1"
+    sudo systemctl status "$1"
+else
+    COLOR "Services"
+    echo "do     >> do"
+fi
