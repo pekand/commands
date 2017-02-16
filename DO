@@ -6,9 +6,11 @@
 #save last command command
 
 create_func_with_name() {
-  eval "$1() {
-    DO $1
-  }"
+    if [ ! -z "$1" ]; then
+      eval "$1() {
+        DO $1
+      }"
+    fi;
 }
 
 function SV() {

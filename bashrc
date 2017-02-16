@@ -24,16 +24,24 @@ alias HTTP="cd /var/www/http/"
 
 alias SRC="cd /var/www/src/"
 
+command_exists () {
+    type "$1" &> /dev/null ;
+}
+
 DISTRO="unknown"
 SERVERUSER="www-data"
-if python3 -mplatform | grep Ubuntu >> /dev/null ; then
-     DISTRO="ubuntu"
-     SERVERUSER="www-data"
+if command_exists python3 ; then
+    if python3 -mplatform | grep Ubuntu >> /dev/null ; then
+      DISTRO="ubuntu"
+      SERVERUSER="www-data"
+    fi
 fi
 
-if python3 -mplatform | grep Centos >> /dev/null ; then
-     DISTRO="centos"
-     SERVERUSER="apache"
+if command_exists python3 ; then
+    if python3 -mplatform | grep Centos >> /dev/null ; then
+         DISTRO="centos"
+         SERVERUSER="apache"
+    fi
 fi
 
 function APACHE {
@@ -44,7 +52,7 @@ function APACHE {
 	if [ "$DISTRO" = "centos" ] ; then
 		sudo subl /etc/httpd/conf/httpd.conf
 	fi
-}  
+}
 
 function PHP {
 	if [ "$DISTRO" = "ubuntu" ] ; then
@@ -52,13 +60,12 @@ function PHP {
 		sudo subl  /etc/php5/cli/php.ini
 		sudo subl  /etc/php/7.0/apache2/php.ini
 		sudo subl  /etc/php/7.0/apache2/php.ini
-		
 	fi
 
 	if [ "$DISTRO" = "centos" ] ; then
 		sudo subl subl /etc/php.ini
 	fi
-}  
+}
 
 function c() {
     new_directory="$*";
